@@ -1,0 +1,135 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project InitialTargets="Ta;Tb;SecondTarget" DefaultTargets="Da;Db" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Target Name="Ta">
+    <Message Text="this is Ta">
+    </Message>
+  </Target>
+  <Target Name="Tb">
+    <Message Text="this is Tb">
+    </Message>
+  </Target>
+  <Target Name="Ta" Condition="true">
+    <Message Text="this is Ta redefined">
+    </Message>
+  </Target>
+  <Target Name="Da">
+    <Message Text="this is Da">
+    </Message>
+  </Target>
+  <Target Name="Db">
+    <Message Text="this is Db">
+    </Message>
+  </Target>
+  <Target Name="FirstTarget">
+    <Message Text="this is FirstTarget">
+    </Message>
+  </Target>
+  <Target Name="SecondTarget" DependsOnTargets="FirstDepends;SecondDepends">
+    <Message Text="this is SecondTarget">
+    </Message>
+  </Target>
+  <Target Name="FirstDepends">
+    <Message Text="this is FirstDependsTarget">
+    </Message>
+  </Target>
+  <Target Name="SecondDepends">
+    <Message Text="this is SecondDependsTarget">
+    </Message>
+  </Target>
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{E63BA06F-DDB3-4C7E-A4E6-D4A92D3D1116}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>Crawler</RootNamespace>
+    <AssemblyName>Crawler</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>Crawler.Program</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup />
+  <ItemGroup>
+    <Reference Include="HtmlAgilityPack, Version=1.8.4.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\HelloWorld\Crawler\HtmlAgilityPack.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+    <Reference Include="zlib.net, Version=1.0.3.0, Culture=neutral, PublicKeyToken=47d7877cb3620160">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\HelloWorld\Crawler\zlib.net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Common\AnalyzeHtml.cs" />
+    <Compile Include="Crawler\Crawler.cs" />
+    <Compile Include="Crawler\CrawlerMode.cs" />
+    <Compile Include="Crawler\PageResult.cs" />
+    <Compile Include="Crawler\ProcessEventArgs.cs" />
+    <Compile Include="Crawler\WebCrawler2.cs" />
+    <Compile Include="Crawler\ICrawl.cs" />
+    <Compile Include="Crawler\PageInfo.cs" />
+    <Compile Include="Crawler\WebCrawler.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Crawler\CrawlerConfig.cs" />
+    <Compile Include="Common\DataStorecs.cs" />
+    <Compile Include="Common\EncodeAndCompress.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Common\SxsHelper.cs" />
+    <Compile Include="Temp.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="app.manifest">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="DLL\Crawler.exe.manifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Crawler.config" />
+    <None Include="DLL\HtmlAgilityPack.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="DLL\HtmlAgilityPack.pdb" />
+    <None Include="DLL\HtmlAgilityPack.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="DLL\sxs.dll" />
+    <None Include="DLL\zlib.net.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

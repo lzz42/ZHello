@@ -1,0 +1,31 @@
+﻿<UserControl x:Class="Wpf.Model.StudentInformationControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Wpf.Model"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid Background="Gray">
+        <Grid.RowDefinitions>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Label x:Name="label_name" Content="Name" FontSize="20" Height="50" Width="100" VerticalAlignment="Center" HorizontalAlignment="Center"></Label>
+        <TextBlock x:Name="tb_name" Text="TextName" Grid.Column="1" Grid.Row="0" FontSize="20" Height="50" Width="100" VerticalAlignment="Center" HorizontalAlignment="Center" Background="Green" ></TextBlock>
+        <TextBlock x:Name="tb_age" Grid.Column="1" Grid.Row="1" FontSize="20" Height="50" Width="100" VerticalAlignment="Center" HorizontalAlignment="Center"></TextBlock>
+        <TextBlock x:Name="tb_height" Grid.Column="1" Grid.Row="2" FontSize="20" Height="50" Width="100"  VerticalAlignment="Center" HorizontalAlignment="Center"></TextBlock>
+        <TextBlock x:Name="tb_hasCar" Grid.Column="1" Grid.Row="3" FontSize="20" Height="50" Width="100" VerticalAlignment="Center" HorizontalAlignment="Center"></TextBlock>
+        <Button x:Name="btn_write" Content="写入" Click="btn_write_Click" Margin="10" FontSize="25" Grid.Column="5" Grid.Row="5"></Button>
+    </Grid>
+</UserControl>

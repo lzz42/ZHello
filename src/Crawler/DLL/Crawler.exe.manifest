@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1">
+    <assemblyIdentity name="DLL" processorArchitecture="*" version="1.0.0.0" type="win32" />
+    <file name = "HtmlAgilityPack.dll"/>
+    <file name = "zlib.net.dll"/>
+</assembly>

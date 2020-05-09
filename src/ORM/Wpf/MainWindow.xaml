@@ -1,0 +1,106 @@
+﻿<Window x:Class="Wpf.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Wpf"
+        mc:Ignorable="d"
+        Title="MainWindow"
+        WindowStyle="SingleBorderWindow"
+        
+        Background="White"
+        Width="500"
+        Height="500"
+        >
+    <!--
+        SizeToContent="WidthAndHeight"
+    AllowsTransparency="True"
+    -->
+    <Canvas Name="canvas1" Margin="10" Background="Gray">
+        <Path Name="path1" Stroke="Blue" StrokeThickness="2">
+            <Path.Fill>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="White" Offset="0"></GradientStop>
+                    <GradientStop Color="Green" Offset="0.45"></GradientStop>
+                    <GradientStop Color="Red" Offset="0.9"></GradientStop>
+                    <GradientStop Color="Yellow" Offset="1"></GradientStop>
+                </LinearGradientBrush>
+            </Path.Fill>
+            <Path.Data>
+                <PathGeometry>
+                    <PathFigure StartPoint="0,0" IsClosed="True">
+                        <LineSegment Point="0,0"></LineSegment>
+                        <ArcSegment Point="50,0" Size="200,200" SweepDirection="Clockwise"></ArcSegment>
+                        <LineSegment Point="0,50"></LineSegment>
+                        <ArcSegment Point="50,50" Size="200,200" SweepDirection="Clockwise"></ArcSegment>
+                        <LineSegment Point="0,100"></LineSegment>
+                        <ArcSegment Point="100,100" Size="200,200" SweepDirection="Clockwise"></ArcSegment>
+                    </PathFigure>
+                </PathGeometry>
+            </Path.Data>
+        </Path>
+        <Label Name="lab1" Width="200" Height="100" FontSize="20" FontStyle="Normal">this is a label</Label>
+        <Canvas Width="364" Height="377" Background="LightGray" ButtonBase.Click="Canvas_Click" Canvas.Left="108" Canvas.Top="72">
+            <x:Code>
+                <![CDATA[
+                private void Canvas_Click(object sender,RoutedEventArgs e)
+                {
+                    if(e!=null && e.Source is Button)
+                    {
+                        var btn = e.Source as Button;
+                        MessageBox.Show(btn.Content.ToString(),"info");
+                    }
+                }
+            ]]>
+            </x:Code>
+            <StackPanel Name="stackpanel1" Orientation="Horizontal"  Margin="20,20,20,20">
+                <Button >s-hbtn1</Button>
+                <Button >s-hbtn2</Button>
+                <Button >s-hbtn3</Button>
+                <Button >s-hbtn4</Button>
+                <Button >s-hbtn5</Button>
+            </StackPanel>
+            <StackPanel Name="stackpanel2" Orientation="Vertical"  Margin="20,40,20,20">
+                <Button >s-vbtn1</Button>
+                <Button >s-vbtn2</Button>
+                <Button >s-vbtn3</Button>
+                <Button >s-vbtn4</Button>
+                <Button >s-vbtn5</Button>
+            </StackPanel>
+            <WrapPanel Name="wrapanel1" Orientation="Horizontal" Margin="80,40,40,40">
+                <Button >w-hbtn1</Button>
+                <Button >w-hbtn2</Button>
+                <Button >w-hbtn3</Button>
+                <Button >w-hbtn4</Button>
+                <Button >w-hbtn5</Button>
+            </WrapPanel>
+            <WrapPanel Name="wrapanel2" Orientation="Vertical" Margin="80,60,40,40">
+                <Button >w-vbtn1</Button>
+                <Button >w-vbtn2</Button>
+                <Button >w-vbtn3</Button>
+                <Button >w-vbtn4</Button>
+                <Button >w-vbtn5</Button>
+            </WrapPanel>
+            <DockPanel Name="dockpanel1" Margin="150,80,40,40">
+                <Button Width="60" Height="50" DockPanel.Dock="Left">d-vbtn1</Button>
+                <Button Height="30"  DockPanel.Dock="Top">d-vbtn2</Button>
+                <Button DockPanel.Dock="Right">d-vbtn3</Button>
+                <Button DockPanel.Dock="Bottom">d-vbtn4</Button>
+                <Button >d-vbtn5</Button>
+            </DockPanel>
+        </Canvas>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40" ></RowDefinition>
+                <RowDefinition  Height="50*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="40"></ColumnDefinition>
+                <ColumnDefinition Width="50*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+        </Grid>
+    </Canvas>
+    <!--<Grid>
+        
+    </Grid>-->
+</Window>

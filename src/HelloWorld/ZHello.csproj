@@ -1,0 +1,267 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="Build\build\Costura.Fody.props" Condition="Exists('Build\build\Costura.Fody.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{DF475759-2C65-48AC-8B94-712A3525042F}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ZHello</RootNamespace>
+    <AssemblyName>ZHello</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <AutorunEnabled>true</AutorunEnabled>
+    <ApplicationRevision>2</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <CodeAnalysisRuleSet>ManagedMinimumRules.ruleset</CodeAnalysisRuleSet>
+    <LangVersion>default</LangVersion>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <LangVersion>7.2</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>ZHello.HelloWorldEntry</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup />
+  <PropertyGroup>
+    <SignManifests>false</SignManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestCertificateThumbprint>8F1BCC8110DF43F4923B529F3E402C60A694C8CE</ManifestCertificateThumbprint>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestKeyFile>HelloWorld_TemporaryKey.pfx</ManifestKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>Key\HelloWorld_psw_123456.pfx</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>false</GenerateManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <TargetZone>Custom</TargetZone>
+  </PropertyGroup>
+  <PropertyGroup>
+    <DelaySign>false</DelaySign>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Accessibility" />
+    <Reference Include="Microsoft.JScript" />
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL" />
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.ComponentModel.Composition.registration" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Management.Instrumentation" />
+    <Reference Include="System.Reflection.Context" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Web" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Windows" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+    <Reference Include="ZeroMQ">
+      <HintPath>Dlls\Zero\ZeroMQ.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Algorithm\Alg_Dekker.cs" />
+    <Compile Include="Algorithm\Alg_KMP.cs" />
+    <Compile Include="Algorithm\Alg_Strassen.cs" />
+    <Compile Include="Algorithm\LRU.cs" />
+    <Compile Include="Algorithm\LZW.cs" />
+    <Compile Include="Algorithm\Alg_Peterson.cs" />
+    <Compile Include="Async\SyncException.cs" />
+    <Compile Include="Base\CSharp7.0.cs" />
+    <Compile Include="Base\HashTable_Learn.cs" />
+    <Compile Include="Base\Hash_Md5_Sha_Crc32.cs" />
+    <Compile Include="Base\CallInfo.cs" />
+    <Compile Include="Base\Hash_Algorithm_Test.cs" />
+    <Compile Include="Base\SpecialFunctionInvoke.cs" />
+    <Compile Include="Base\TypeConverter_Test.cs" />
+    <Compile Include="Cecil\Errors.cs" />
+    <Compile Include="Cecil\MonoCecilPractices.cs" />
+    <Compile Include="CLR\AppDomainHelper.cs" />
+    <Compile Include="CLR\GrammerParser.cs" />
+    <Compile Include="Common\DbgHelper.cs" />
+    <Compile Include="Common\ResouceHelper.cs" />
+    <Compile Include="Common\SerializationHelper.cs" />
+    <Compile Include="Common\TrayHelper.cs" />
+    <Compile Include="Common\UseUnmanagedLibrary.cs" />
+    <Compile Include="Common\WebHelper.cs" />
+    <Compile Include="DesignPattern\ActionPattern.cs" />
+    <Compile Include="DesignPattern\CreatePattern.cs" />
+    <Compile Include="DesignPattern\SpecialPattern.cs" />
+    <Compile Include="DesignPattern\StructPattern.cs" />
+    <Compile Include="GDI\ColorAlgorithm.cs" />
+    <Compile Include="GDI\ImageConvert.cs" />
+    <Compile Include="Common\LicenseHelper.cs" />
+    <Compile Include="GDI\NativeMethods.cs" />
+    <Compile Include="GDI\Use_ColorMatrix.cs" />
+    <Compile Include="Common\InjectionHelper.cs" />
+    <Compile Include="MQ\IDealer.cs" />
+    <Compile Include="MQ\IPush.cs" />
+    <Compile Include="MQ\IReqClient.cs" />
+    <Compile Include="MQ\ISocket.cs" />
+    <Compile Include="MQ\ISubClient.cs" />
+    <Compile Include="MQ\IXSubClient.cs" />
+    <Compile Include="MQ\MQFactory.cs" />
+    <Compile Include="MQ\ZeroMQ\ZeroHelper.cs" />
+    <Compile Include="MQ\ZeroMQ\ZeroReqClient.cs" />
+    <Compile Include="MQ\ZeroMQ\ZeroMQTest.cs" />
+    <Compile Include="MQ\ZeroMQ\ZeroSubClient.cs" />
+    <Compile Include="MQ\ZeroMQ\ZeroVentilatorWorkerSinker.cs" />
+    <Compile Include="MQ\ZeroMQ\ZeroXSubAndXPub.cs" />
+    <Compile Include="Net\ThriftHelper.cs" />
+    <Compile Include="MEF\CalImpl.cs" />
+    <Compile Include="MEF\ICal.cs" />
+    <Compile Include="MEF\MEFClient.cs" />
+    <Compile Include="Other\PipelineStyleProgramming.cs" />
+    <Compile Include="Common\SecurityHelper.cs" />
+    <Compile Include="HelloWorld.cs" />
+    <Compile Include="Algorithm\Sort_Algorithm.cs" />
+    <Compile Include="Async\AsyncHelper.cs" />
+    <Compile Include="Async\Sync.cs" />
+    <Compile Include="Async\SystemInfo.cs" />
+    <Compile Include="Async\ThreadSync.cs" />
+    <Compile Include="Base\BaseKnowledge.cs" />
+    <Compile Include="CLR\CLR.cs" />
+    <Compile Include="CLR\Performance.cs" />
+    <Compile Include="Common\ConfigHelper.cs" />
+    <Compile Include="DesignPattern\DesignPattern.cs" />
+    <Compile Include="OS\InvokeHelper.cs" />
+    <Compile Include="MEF\MEFProgram.cs" />
+    <Compile Include="Base\MemoryLayout.cs" />
+    <Compile Include="Base\HackersDelight.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Common\RegexHelper.cs" />
+    <Compile Include="Net\IPC.cs" />
+    <Compile Include="Algorithm\Alg_Banker.cs" />
+    <Compile Include="OS\FileAssociation.cs" />
+    <Compile Include="OS\IOSecurityHelper.cs" />
+    <Compile Include="Algorithm\PhilosopherEatingProblem.cs" />
+    <Compile Include="Common\WCFHelper.cs" />
+    <Compile Include="OS\WindowsHook.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Algorithm\Algorithm.md" />
+    <None Include="Algorithm\LFU.md" />
+    <None Include="Algorithm\LRU.md" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="CLR\IL.md" />
+    <None Include="HelloWorld.exe.manifest">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Key\HelloWorld_psw_123456.pfx" />
+    <None Include="Key\HelloWorld_TemporaryKey.pfx" />
+    <None Include="Key\MyPorfile.PublicKey" />
+    <None Include="Key\MyPorfile.snk" />
+    <None Include="MQ\ZeroMQ\ZeroMQ使用.md" />
+    <None Include="Properties\app.manifest" />
+    <None Include="Redis\Server\ReadMe.md" />
+    <EmbeddedResource Include="Redis\Server\Redis-x64-3.2.100\Redis on Windows Release Notes.docx" />
+    <EmbeddedResource Include="Redis\Server\Redis-x64-3.2.100\Redis on Windows.docx" />
+    <EmbeddedResource Include="Redis\Server\Redis-x64-3.2.100\redis.windows-service.conf" />
+    <EmbeddedResource Include="Redis\Server\Redis-x64-3.2.100\redis.windows.conf" />
+    <EmbeddedResource Include="Redis\Server\Redis-x64-3.2.100\Windows Service Documentation.docx" />
+    <None Include="Doc\Windows权限相关.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Dlls\Zero\amd64\libzmq.dll" />
+    <EmbeddedResource Include="Dlls\Zero\i386\libzmq.dll" />
+    <EmbeddedResource Include="Dlls\Zero\ZeroMQ.dll" />
+    <EmbeddedResource Include="Res\test.js" />
+    <EmbeddedResource Include="Net\SSH\freeFTPd.exe" />
+    <EmbeddedResource Include="Net\SSH\freeSSHd.exe" />
+    <EmbeddedResource Include="Net\SSH\freeUserImport.exe" />
+    <EmbeddedResource Include="Net\Thrift\thrift-0.11.0.exe" />
+    <EmbeddedResource Include="Res\msg.wav" />
+    <EmbeddedResource Include="Redis\Server\Redis-x64-3.2.100\EventLog.dll" />
+    <EmbeddedResource Include="Redis\Server\Redis-x64-3.2.100\redis-benchmark.exe" />
+    <EmbeddedResource Include="Redis\Server\Redis-x64-3.2.100\redis-check-aof.exe" />
+    <EmbeddedResource Include="Redis\Server\Redis-x64-3.2.100\redis-cli.exe" />
+    <EmbeddedResource Include="Redis\Server\Redis-x64-3.2.100\redis-server.exe" />
+    <EmbeddedResource Include="Res\Img01.png" />
+    <EmbeddedResource Include="Res\ColorRing.png" />
+    <EmbeddedResource Include="Res\ZIP.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="AOP\MSEL_APO\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+  <Import Project="Build\build\Fody.targets" Condition="Exists('Build\build\Fody.targets')" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

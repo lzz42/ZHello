@@ -1,0 +1,34 @@
+﻿@model MyAspWeb.Models.Blog
+@{
+    ViewBag.Title = "添加博客";
+}
+<form asp-controller="MyAspWeb.Controllers.BlogController" asp-action="Register" method="post">
+    <div class="form-group">
+        <label asp-for="BlogId" class="col-md-2 control-label">ID:</label>
+        <div class="col-md-10">
+            <input class="form-control" asp-for="BlogId" />
+            <span asp-validation-for="BlogId" class="text-danger"></span>
+        </div>
+        <label asp-for="BlogName" class="col-md-2 control-label">Name:</label>
+        <div class="col-md-10">
+            <input class="form-control" asp-for="BlogName" />
+            <span asp-validation-for="BlogName" class="text-danger"></span>
+        </div>
+        <label asp-for="Url" class="col-md-2 control-label">URL:</label>
+        <div class="col-md-10">
+            <input class="form-control" asp-for="Url" />
+            <span asp-validation-for="Url" class="text-danger"></span>
+        </div>
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="提交" class="btn btn-default" />
+        </div>
+    </div>
+    <br>
+    <a asp-action="Index">Goto Blog Index 01</a>
+    <br>
+    <a  asp-controller="MyAspWeb.Controllers.BlogController" asp-action="Index">Goto Blog Index 02</a>
+    <br>
+    @Html.ActionLink("Goto Blog Index 03", "Index");
+    <br>
+</form>
+<email>myEmailAddress</email>

@@ -1,0 +1,98 @@
+﻿@model IEnumerable<MyAspWeb.Models.Blog>
+@using MyAspWeb.Services
+@using MyAspWeb.Models
+@inject BlogStatisticsService StatciService
+
+@{
+    ViewBag.Title = "博客";
+}
+<table>
+    <tr>
+        <th>ID</th>
+        <th>名称</th>
+        <th>链接</th>
+    </tr>
+    @if (Model != null && Model.Count() > 0)
+    {
+        foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.BlogId)
+                </td>
+                <td>
+                    <a>
+                        @Html.DisplayFor(modelItem => item.BlogName)
+                    </a>
+                </td>
+                <td>
+                    <a>
+                        @Html.DisplayFor(modelItem => item.Url)
+                    </a>
+                </td>
+            </tr>
+        }
+    }
+    else
+    {
+        <tr>
+            <td>
+                <a href="@ViewData["Goto"]">@ViewData["Tip"]</a>
+            </td>
+        </tr>
+    }
+</table>
+<div>
+    <label>统计信息</label>
+    <table>
+        <tr>
+            <td>总人数：</td>
+            <td>@StatciService.GetCount()</td>
+        </tr>
+        <tr>
+            <td>CN：</td>
+            <td>
+                @Html.DropDownList("BlogName", StatciService
+           .ListBolgs()
+           .FindAll(b => b.BlogName.StartsWith("CN"))
+           .Select(b => new SelectListItem()
+               {
+                   Text = b.BlogName,
+                   Value = b.BlogId.ToString()
+               }
+           ))
+            </td>
+        </tr>
+        <tr>
+            <td>US：</td>
+            <td>
+                @Html.DropDownList("BlogName", StatciService
+           .ListBolgs()
+           .FindAll(b => b.BlogName.StartsWith("US"))
+           .Select(b => new SelectListItem()
+               {
+                   Text = b.BlogName,
+                   Value = b.BlogId.ToString()
+               }
+           ))
+            </td>
+        </tr>
+        <tr>
+            <td>EN：</td>
+            <td>
+                @Html.DropDownList("BlogName", StatciService
+           .ListBolgs()
+           .FindAll(b => b.BlogName.StartsWith("EN"))
+           .Select(b => new SelectListItem()
+               {
+                   Text = b.BlogName,
+                   Value = b.BlogId.ToString()
+               }
+           ))
+        </td>
+    </tr>
+    </table>
+</div>
+<div style="background-color:coral">
+    @await Component.InvokeAsync("BlogList", new { prefix = "CN" })
+</div>

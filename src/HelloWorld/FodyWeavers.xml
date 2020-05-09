@@ -1,0 +1,10 @@
+﻿<Weavers xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="FodyWeavers.xsd">
+  <Costura CreateTemporaryAssemblies="true">
+    <!--<Unmanaged32Assemblies>
+     Dlls/Zero/amd64/libzmq.dll
+    </Unmanaged32Assemblies>
+    <Unmanaged64Assemblies>
+     Dlls/Zero/i386/libzmq.dll
+    </Unmanaged64Assemblies>-->    
+  </Costura>
+</Weavers>
