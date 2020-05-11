@@ -23,7 +23,7 @@ using MyAspWeb.Modules;
 
 namespace MyAspWeb.Startups
 {
-    public class LearnTestStartup : IStartup
+    public class LearnTestStartup
     {
         private ConfigurationBuilder Builder { get; set; }
 
@@ -147,6 +147,10 @@ namespace MyAspWeb.Startups
                 routes.MapRoute(
                     name: "blog",
                     template: "blog/{action=Index}");
+                routes.MapRoute(
+                    name: "html",
+                    template: "html",
+                    "~/wwwroot/WebSocketClient.html");
                 routes.MapRoute(
                     name: "default",
                     template: "{controller}/{action}/{id?}",

@@ -9,6 +9,7 @@ namespace MyAspWeb.Models
         [Required]
         [Range(0, int.MaxValue - 1)]
         public int BlogId { get; set; }
+
         [Required]
         [StringLength(60)]
         public string BlogName { get; set; }
@@ -17,6 +18,10 @@ namespace MyAspWeb.Models
         [StringLength(140)]
         [Url]
         public string Url { get; set; }
+
+        [Required]
+        [DataType(DataType.DateTime)]
+        public DateTime CreateTime { get; set; }
 
         public List<Post> Posts { get; set; }
 

@@ -20,7 +20,7 @@ namespace MyAspWeb.Controllers
     {
         private BloggingDbContext _ctx;
         private GameSetting _setting;
-        public BlogController(BloggingDbContext ctx,IOptions<Models.GameSetting> options)
+        public BlogController(BloggingDbContext ctx, IOptions<Models.GameSetting> options)
         {
             _ctx = ctx;
             _setting = options.Value;

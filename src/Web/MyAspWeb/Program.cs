@@ -1,13 +1,7 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using MyAspWeb.Models;
 using MyAspWeb.Startups;
 
 namespace MyAspWeb
@@ -44,14 +38,21 @@ namespace MyAspWeb
         {
             IHostBuilder builder = null;
             string v = "learn";
+            v = "netnote";
             switch (v)
             {
                 case "static-file-server":
                     builder = CreateHostBulder_StaticFileServer(args);
                     break;
+
                 case "learn":
                     builder = CreateHostBulder_Learn(args);
                     break;
+
+                case "netnote":
+                    builder = CreateHostBulder_NetNote(args);
+                    break;
+
                 default:
                     break;
             }
@@ -78,7 +79,18 @@ namespace MyAspWeb
                         webBuilder.UseContentRoot(Directory.GetCurrentDirectory());
                         //webBuilder.UseContentRoot(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot"));
                     });
-                    //.UseContentRoot(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot"));
+            //.UseContentRoot(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot"));
+        }
+
+        private static IHostBuilder CreateHostBulder_NetNote(string[] args)
+        {
+            return Host.CreateDefaultBuilder(args)
+                    .ConfigureWebHostDefaults(webBuilder =>
+                    {
+                        webBuilder.UseStartup<NetNoteStartup>();
+                        webBuilder.UseUrls("https://*:8851");
+                        webBuilder.UseContentRoot(Directory.GetCurrentDirectory());
+                    });
         }
     }
 }

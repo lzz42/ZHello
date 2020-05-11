@@ -12,7 +12,7 @@ using Microsoft.Extensions.Logging;
 
 namespace MyAspWeb.Startups
 {
-    public class StaticFileServerStartup : IStartup
+    public class StaticFileServerStartup
     {
         public const string ShareDir = @"C:\IISRoot\WebSocket\tools";
 

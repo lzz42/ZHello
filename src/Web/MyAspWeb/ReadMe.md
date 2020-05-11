@@ -53,7 +53,21 @@ public void ConfigureServices(IServiceCollection services)
 - 常见问题：
   - 1.存在多个Context时需要指定context
     - dotnet ef migrations add [Dbname] -c [Context Name]
+        EG:`dotnet ef migrations add [Dbname] -c BloggingDbContext`
+    - dotnet ef database update -c [Context Name]
+        EG:`dotnet ef database update [Dbname] -c BloggingDbContext`
 	- 添加上下文件工厂类：https://docs.microsoft.com/zh-cn/ef/core/miscellaneous/cli/dbcontext-creation
+```C#
+public class BloggingDbContextFactory : IDesignTimeDbContextFactory<BloggingDbContext>
+{
+    public BloggingDbContext CreateDbContext(string[] args)
+    {
+        var builder = new DbContextOptionsBuilder<BloggingDbContext>();
+        builder.UseSqlite("Data Source=blog.db");
+        return new BloggingDbContext(builder.Options);
+    }
+}
+```
 
 ## DF
 
