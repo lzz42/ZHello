@@ -1,9 +1,9 @@
-﻿using HelloWorld.MQ.ZeroMQ;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
+﻿using System;
 using System.Threading;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using ZHello.MQ;
 
-namespace HelloWorld.Test.MQ
+namespace ZHello.Test.MQ
 {
     [TestClass]
     public class ZeroMqTest
@@ -11,13 +11,11 @@ namespace HelloWorld.Test.MQ
         private static void Main(string[] args)
         {
 #if C
-
             Console.WriteLine("Req Client");
             var t = new ZeroMqTest();
             t.RunReqClient();
             Console.ReadLine();
 #else
-
             Console.WriteLine("Rep Server");
             var t1 = new ZeroMqTest();
             t1.RunRepServer();
@@ -29,7 +27,7 @@ namespace HelloWorld.Test.MQ
         public void RunReqClient()
         {
             //var c = new ZeroReqClient("tcp://127.0.0.1:18848");
-            var c = HelloWorld.MQ.MQFactory.MakeReqClient("tcp://127.0.0.1:18848");
+            var c = MQFactory.MakeReqClient("tcp://127.0.0.1:18848");
             string recv = "";
             string error;
             int cc = 0;
@@ -55,7 +53,7 @@ namespace HelloWorld.Test.MQ
         [TestMethod]
         public void RunRepServer()
         {
-            var s = new ZeroRepServer("tcp://127.0.0.1:18848");
+            var s = MQFactory.MakeRepServer("tcp://127.0.0.1:18848");
             int cc = 0;
             string exit = "";
             s.Respose = (r) =>
@@ -100,14 +98,11 @@ namespace HelloWorld.Test.MQ
         [TestMethod]
         public void RunSubClient()
         {
-
         }
 
         [TestMethod]
         public void RunPubServer()
         {
-
         }
-
     }
 }

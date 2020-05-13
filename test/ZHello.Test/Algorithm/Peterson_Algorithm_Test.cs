@@ -5,10 +5,10 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using HelloWorld.Algorithm;
+using ZHello.Algorithm;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace HelloWorld.Test.Algorithm
+namespace ZHello.Test.Algorithm
 {
     [TestClass]
     public class Peterson_Algorithm_Test

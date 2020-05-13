@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using HelloWorld.Common;
-using HelloWorld.Base;
+using ZHello.Common;
+using ZHello.Base;
 using System.Diagnostics;
 
-namespace HelloWorld.Test.Common
+namespace ZHello.Test.Common
 {
     [TestClass]
     public class DbgHelper_Test
@@ -19,12 +19,12 @@ namespace HelloWorld.Test.Common
             var obj = new CallInfo();
             var ty = obj.GetType();
             var mtoken = ty.MetadataToken;
-            var pdb = DbgHelper.PDB;
-            var addr = pdb.LoadModuleEx(ty.Assembly.CodeBase);
-            var m1 = pdb.EnumModules();
-            var m2 = pdb.EnumSymbols(addr);
-            var m3 = pdb.EnumTypes(addr);
-            var m4 = pdb.EnumSourceFiles(addr);
+            //var pdb = DbgHelper.PDB;
+            //var addr = pdb.LoadModuleEx(ty.Assembly.CodeBase);
+            //var m1 = pdb.EnumModules();
+            //var m2 = pdb.EnumSymbols(addr);
+            //var m3 = pdb.EnumTypes(addr);
+            //var m4 = pdb.EnumSourceFiles(addr);
         }
 
         [TestMethod]
