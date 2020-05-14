@@ -9,5 +9,7 @@ namespace MyAspWeb.Repositories
     public interface INoteTypeRepository
     {
         Task<List<NoteType>> ListAsync();
+        Task AddAsync(NoteType note);
+        void DeleteAll();
     }
 }

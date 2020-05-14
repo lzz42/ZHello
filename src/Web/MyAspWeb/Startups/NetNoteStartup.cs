@@ -8,6 +8,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MyAspWeb.Contexts;
 using MyAspWeb.Repositories;
+using MyAspWeb.Extensions;
+using MyAspWeb.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace MyAspWeb.Startups
 {
@@ -35,11 +38,14 @@ namespace MyAspWeb.Startups
                 options.UseSqlite(connection);
                 //options.UseSqlServer(connection);
             });
+            services.AddIdentity<NoteUser, IdentityRole>()
+                .AddEntityFrameworkStores<NoteContext>()
+                .AddDefaultTokenProviders();
 
             services.AddScoped<INoteRepository, NoteRepository>();
             services.AddScoped<INoteTypeRepository, NoteTypeRepository>();
-
             services.AddRazorPages();
+            services.AddControllers();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -56,36 +62,32 @@ namespace MyAspWeb.Startups
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+            app.UseBasicAuthenticateMiddleware(new Middleware.BasicUser()
+            {
+                User = "123",
+                Password = "abc"
+            });
+            app.UseStaticFiles();
+            app.UseMvcWithDefaultRoute();
 
             //app.UseHttpsRedirection();
-            //app.UseStaticFiles();
-            app.UseMvcWithDefaultRoute();
+
+            app.UseRouting();
+
             app.UseMvc(routes =>
             {
-                //routes.MapRoute(
-                //    name: "note",
-                //    template: "note/{action}",
-                //    defaults: new
-                //    {
-                //        action = "index",
-                //    });
-                //routes.MapRoute(
-                //    name: "html",
-                //    template: "html",
-                //    "~/wwwroot/WebSocketClient.html");
+                routes.MapRoute(
+                    name: "api",
+                    template: "api/{controller}/{action}/{id?}");
                 routes.MapRoute(
                     name: "default",
                     template: "{controller}/{action=index}/{id?}"
                     );
             });
 
-            app.UseRouting();
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller}/{action=index}"
-                    );
+                endpoints.MapControllers();
             });
         }
     }

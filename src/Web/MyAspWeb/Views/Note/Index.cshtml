@@ -24,14 +24,17 @@
                 <h3>@item.Title</h3>
                 @if (item != null)
                 {
-
-                <h5>类型：@item.Type.Name</h5>
+                    <h5>类型：@item.Type.Name</h5>
                 }
                 else
                 {
-                <h5>类型：NULL</h5>
+                    <h5>类型：NULL</h5>
                 }
                 <div class="=content" id="@item.Id">@item.Content</div>
+                @if (!string.IsNullOrEmpty(item.Attachment))
+                {
+                    <a href="@item.Attachment">下载</a>
+                }
             </div>
         }
     }

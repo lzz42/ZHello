@@ -13,5 +13,6 @@ namespace MyAspWeb.Repositories
         Task AddAsync(Note note);
         Task UpdateAsync(Note note);
         Tuple<List<Note>,int> PageList(int pageindex, int pagesize);
+        void DeleteAll();
     }
 }

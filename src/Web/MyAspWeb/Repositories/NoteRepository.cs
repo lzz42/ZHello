@@ -19,18 +19,41 @@ namespace MyAspWeb.Repositories
 
         public Task AddAsync(Note note)
         {
+            if (note.Type == null)
+            {
+                note.Type = Ctx.NoteTypes.ToList().Find(t => t.Id == note.TypeId);
+            }
+            if(note.Type==null && note.TypeId == 0)
+            {
+                note.TypeId = Ctx.NoteTypes.ToList().Count + 1;
+                note.Type = Ctx.NoteTypes.ToList().Find(t => t.Id == note.TypeId);
+                if (note.Type == null)
+                {
+                    note.Type = new NoteType()
+                    {
+                        Id = note.TypeId,
+                        Name = "Auto Defined ID"
+                    };
+                }
+            }
             Ctx.Notes.Add(note);
             return Ctx.SaveChangesAsync();
         }
 
+        public void DeleteAll()
+        {
+            Ctx.Notes.RemoveRange(Ctx.Notes.ToArray());
+            Ctx.SaveChanges();
+        }
+
         public Task<Note> GetByIdAsync(int id)
         {
-            return Task.FromResult(Ctx.Notes.FirstOrDefault(r => r.Id == id));
+            return Ctx.Notes.Include(type => type.Type).FirstOrDefaultAsync(r => r.Id == id);
         }
 
         public Task<List<Note>> ListAsync()
         {
-            return Task.FromResult(Ctx.Notes.Include(type=>type.Type).ToList());
+            return Ctx.Notes.Include(type=>type.Type).ToListAsync();
         }
 
         public Tuple<List<Note>,int> PageList(int pageindex, int pagesize)

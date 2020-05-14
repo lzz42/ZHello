@@ -1,9 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using MyAspWeb.Models;
 
 namespace MyAspWeb.Contexts
 {
-    public class NoteContext : DbContext
+    public class NoteContext : IdentityDbContext<NoteUser>
     {
         public DbSet<Note> Notes { get; set; }
         public DbSet<NoteType> NoteTypes { get; set; }

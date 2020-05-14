@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using MyAspWeb.Models;
@@ -49,19 +51,40 @@ namespace MyAspWeb.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Add(NoteModel note)
+        public async Task<IActionResult> Add([FromServices] IWebHostEnvironment env,NoteModel note)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            await Repository.AddAsync(new Note()
+            var fn = string.Empty;
+            if (note.Attachment != null)
+            {
+                var dir = Path.Combine(env.WebRootPath, "file");
+                if (!Directory.Exists(dir))
+                {
+                    Directory.CreateDirectory(dir);
+                }
+                fn = Path.Combine(dir, Path.GetFileNameWithoutExtension(note.Attachment.FileName) + "_" + Guid.NewGuid().ToString() + Path.GetExtension(note.Attachment.FileName));
+                using (var stream = new FileStream(fn, FileMode.CreateNew))
+                {
+                    note.Attachment.CopyTo(stream);
+                }
+            }
+            var newNote = new Note()
             {
                 Title = note.Title,
                 Content = note.Content,
                 CreateTime = DateTime.Now,
-                TypeId = note.Type,
-            });
+                Password = note.Password,
+                Attachment = fn,
+            };
+            if (note.Type != null)
+            {
+                newNote.Type = note.Type;
+                newNote.TypeId = note.Type.Id;
+            }
+            await Repository.AddAsync(newNote);
             return RedirectToAction("Index");
         }
 
@@ -77,5 +100,26 @@ namespace MyAspWeb.Controllers
             ViewBag.Types = items;
             return View("Add");
         }
+
+        public async Task<IActionResult> Detail(int id)
+        {
+            var note = await Repository.GetByIdAsync(id);
+            if (!string.IsNullOrEmpty(note.Password))
+            {
+                return View();
+            }
+            return View(note);
+        }
+
+        public async Task<IActionResult> Detail(int id,string psw)
+        {
+            var note = await Repository.GetByIdAsync(id);
+            if (!note.Password.Equals(psw))
+            {
+                return BadRequest("密码错误");
+            }
+            return View(note);
+        }
+
     }
 }
