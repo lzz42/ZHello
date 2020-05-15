@@ -71,8 +71,8 @@ namespace MyAspWeb.Startups
             app.UseMvcWithDefaultRoute();
 
             //app.UseHttpsRedirection();
-
             app.UseRouting();
+            app.UseAuthorization();
 
             app.UseMvc(routes =>
             {
