@@ -64,8 +64,8 @@ namespace MyAspWeb.Startups
             }
             app.UseBasicAuthenticateMiddleware(new Middleware.BasicUser()
             {
-                User = "123",
-                Password = "abc"
+                User = "f",
+                Password = "123"
             });
             app.UseStaticFiles();
             app.UseMvcWithDefaultRoute();

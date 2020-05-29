@@ -39,6 +39,7 @@ namespace MyAspWeb
             IHostBuilder builder = null;
             string v = "learn";
             v = "netnote";
+            v = "static-file-server";
             switch (v)
             {
                 case "static-file-server":
@@ -66,6 +67,7 @@ namespace MyAspWeb
                      {
                          webBuilder.UseStartup<StaticFileServerStartup>();
                          webBuilder.UseUrls("https://*:8849");
+                         webBuilder.UseIISIntegration();
                      });
         }
 

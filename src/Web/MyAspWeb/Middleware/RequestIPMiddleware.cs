@@ -21,6 +21,7 @@ namespace MyAspWeb.Middleware
         public async Task Invoke(HttpContext context)
         {
             _logger.LogInformation(string.Format("User IP:{0}", context.Connection.RemoteIpAddress.ToString()));
+            context.Response.ContentType = "charset=utf-8";
             await _next.Invoke(context);
         }
     }
