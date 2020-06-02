@@ -7,12 +7,17 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using MyAspWeb.Contexts;
+using MyAspWeb.Extensions;
+using MyAspWeb.Migrations.Note;
 
 namespace MyAspWeb.Startups
 {
@@ -37,6 +42,17 @@ namespace MyAspWeb.Startups
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDirectoryBrowser();
+
+            //var connection = "Data Source=./note.db";
+            //connection = @"Server=.;Database=Note;UID=sa;PWD=sa;";
+            //services.AddDbContext<NoteContext>(options =>
+            //{
+            //    options.UseSqlite(connection);
+            //    //options.UseSqlServer(connection);
+            //});
+            //services.AddIdentity<NoteUser, IdentityRole>()
+            //    .AddEntityFrameworkStores<NoteContext>()
+            //    .AddDefaultTokenProviders();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory factory)
@@ -45,6 +61,11 @@ namespace MyAspWeb.Startups
 
             app.UseMiddleware(typeof(Middleware.RequestIPMiddleware));
 
+            app.UseBasicAuthenticateMiddleware(new Middleware.BasicUser()
+            {
+                User = "flogin",
+                Password = "helloworld"
+            });
             var shareDirs = Configuration.GetValue<string>("SharedDir").Split(';');
             string bdir = null;
             if (shareDirs != null)

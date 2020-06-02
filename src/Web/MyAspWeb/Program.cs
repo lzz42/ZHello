@@ -68,6 +68,7 @@ namespace MyAspWeb
                          webBuilder.UseStartup<StaticFileServerStartup>();
                          webBuilder.UseUrls("https://*:8849");
                          webBuilder.UseIISIntegration();
+                         webBuilder.UseContentRoot(Directory.GetCurrentDirectory());
                      });
         }
 
