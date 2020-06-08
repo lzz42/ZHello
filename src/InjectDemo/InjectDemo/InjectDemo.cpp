@@ -12,7 +12,7 @@ int Test_tmain(int argc, _TCHAR* argv[])
 	int pid;
 	void *pNativeDllRemote;
 	FARPROC pLoadLibrary;
-	TCHAR szNativeDllPath[_MAX_PATH] = _T("D:\MyGit\0\GitHelloWorld\bin\Debug\NativeDll.dll");
+	TCHAR szNativeDllPath[_MAX_PATH] = _T("NativeDll.dll");
 	cout<<"input the process id to inject"<<endl;
 	cin>>pid;
 	

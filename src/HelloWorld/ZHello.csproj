@@ -156,6 +156,8 @@
     <Compile Include="GDI\NativeMethods.cs" />
     <Compile Include="GDI\Use_ColorMatrix.cs" />
     <Compile Include="Common\InjectionHelper.cs" />
+    <Compile Include="Hook\Hooker.cs" />
+    <Compile Include="Hook\LDasm.cs" />
     <Compile Include="MQ\IDealer.cs" />
     <Compile Include="MQ\IPush.cs" />
     <Compile Include="MQ\IReqClient.cs" />
@@ -246,6 +248,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="AOP\MSEL_APO\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Hook\LDasm.c" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

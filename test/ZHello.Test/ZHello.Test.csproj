@@ -63,6 +63,7 @@
     <Compile Include="Algorithm\Dekker_Algorithm_Test.cs" />
     <Compile Include="Algorithm\Peterson_Algorithm_Test.cs" />
     <Compile Include="Common\DbgHelper_Test.cs" />
+    <Compile Include="Hook\HookerTest.cs" />
     <Compile Include="MQ\ZeroMqTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -72,6 +73,7 @@
       <Name>HelloWorld</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="MSTest\MSTest.TestAdapter.2.0.0\build\net45\MSTest.TestAdapter.targets" Condition="Exists('MSTest\MSTest.TestAdapter.2.0.0\build\net45\MSTest.TestAdapter.targets')" />

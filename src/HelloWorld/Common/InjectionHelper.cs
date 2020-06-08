@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Reflection;
 using System.Runtime.InteropServices;
 
 namespace ZHello.Common
@@ -28,6 +30,19 @@ namespace ZHello.Common
 
     public class InjectionHelper
     {
+        /* 注入C#代码
+         * 1.获取直接进程句柄
+         * 2.判断该进程是否加载并运行CLR
+         * 3.若没有运行CLR则加载并运行CLR
+         * 4.运行CLR，创建应用程序域
+         * 5.加载DLL，执行代码
+             */
+
+        public static bool Inject(int pid,MethodBase method)
+        {
+            var proc = Process.GetProcessById(pid);
+            return false;
+        }
     }
 
     #region WIN-API
@@ -61,6 +76,8 @@ namespace ZHello.Common
         [DllImport("Kernel32.dll")]
         public static extern int CreateRemoteThreadEx(int hProcess, SECURITY_ATTRIBUTES lpThreadAttributes
             , uint dwStackSize, int lpStartAddress, IntPtr lpParameter, int dwCreationFlags, long lpThreadId);
+
+
 
         /*
          typedef struct _SECURITY_ATTRIBUTES {
