@@ -157,7 +157,7 @@
     <Compile Include="GDI\Use_ColorMatrix.cs" />
     <Compile Include="Common\InjectionHelper.cs" />
     <Compile Include="Hook\Hooker.cs" />
-    <Compile Include="Hook\LDasm.cs" />
+    <Compile Include="Hook\InLineHooker.cs" />
     <Compile Include="MQ\IDealer.cs" />
     <Compile Include="MQ\IPush.cs" />
     <Compile Include="MQ\IReqClient.cs" />

@@ -1,13 +1,15 @@
 ﻿#pragma warning disable CS3026,CS3001
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.Remoting.Messaging;
 using System.Threading;
 
 namespace ZHello.Async
 {
     /*线程同步相关
-     
+
      1.采用线程同步事件EventWaitHandle的派生类：
         a.ManualResetEvent
         b.AotuResetEvent
@@ -24,7 +26,7 @@ namespace ZHello.Async
     */
 
     /*AutoResetEvent与ManualResetEvent的区别
-     * 
+     *
      同步机制包括
      临界区（critical section），
      信号量（simphore），
@@ -58,30 +60,30 @@ namespace ZHello.Async
     释放资源Release() 增加一次可用计数
 
     关于Mutex
-    
+
      */
 
     /*线程同步
      * 临界区问题
      * 进入区——》临界区——》退出区——》剩余区
-     * 
+     *
      * 解决：
      * 1.互斥
      * 2.前进
      * 3.有限等待
      * 操作系统内处理临界区：抢占内核、非抢占内核
-     * 
+     *
      * Peterson算法——》基于软件的临界区解决
      * 硬件同步：原子指令、信号量（semaphore）
-     * 
+     *
      * 1.原子操作：volatile，InterLock
      * 2.锁：lock，Monitor，SpinLock，SpinWait
      * 3.互斥算法：
      * 4.特殊：Threadlocal
      * 5.信号量：Simphore,Simphoeresilm
      * 6.互斥体:Mutex
-     * 
-     * 原子操作 -   
+     *
+     * 原子操作 -
     线程同步
     1.原子操作：一组能够保证操作原子性的API
     2.锁：
@@ -99,11 +101,54 @@ namespace ZHello.Async
 
      */
 
+    /* 线程的开销
+     线程内核对象（Thread kernal object）：
+        该数据结构：线程描述属性信息+线程上下文（一个内存块，CPU寄存器集合，x86机器约700Byte,x64机器12040Byte,IA64机器约2500Byte）
+     线程环境块(thread environment block TEB):
+        用户模式中分配和初始化的内存块，大小为一个内存页（x86-x64为4K，IA64为8K）
+        包含异常处理链首：线程进入try时插入一个节点，退出try时删除一个节点
+        包含线程本地存储数据，GDI OpenGL数据结构：
+    用户模式栈（User-Mode Stack）:
+        用于存储传递给方法的局部变量和参数，以及一个当前执行的方法返回时，要执行代码的地址，默认大小为1M
+    内核模式栈（Kernal-Mode Stack）:
+        传递给内核模式的实参、内部函数参数、函数局部变量、返回地址，32位12KB,64位24KB
+    DLL线程连接和线程分离通知：
+        创建或者终止一个线程时，都会调用该进程内所有加载的DLL的DllMain方法，并传递DLL_THREAD_ATTACH或者DLL_THREAD_DETACH标识
+        托管DLL不会收到通知（没有DllMain函数），非托管DLL可以通过调用Win32 DisableThreadLibraryCalls来禁用通知
+    Windows线程切换操作：
+        1.保存当前CPU寄存器值到当前运行线程的线程上下文
+        2.调度其他线程，若该线程为其他进程，还需要切换该进程的虚拟地址空间
+        3.加载该线程的上下文到CPU寄存器
+    上下文切换是净开销
+    再次调度同一线程时，不需要上下文切换
+    CLR线程与Windows线程
+        目前一个CLR线程直接对应于一个Windows线程
+    创建专用线程的条件（Thread类）：
+        1.线程需要以非普通线程优先级运行（所有线程池线程都以普通优先级运行）
+        2.需要现场表现为一个前提线程，防止线程在任务未终结前进程终止（线程池始终是后台线程）
+        3.计算限制任务需要长时间运行
+        4.要启动一个线程，并可能调用Abort方法提前终止
+    使用线程的理由：
+        1.使用线程将代码同其他代码隔离，提供应用程序的可靠性
+        2.简化代码
+        3.实现并发执行
+    线程优先级：
+        Windows优先级从0~到31（最高），系统轮询检测高优先级进行调度，调度时会抢占低优先级的CPU，即使时间片未使用完
+        进程的优先级类6个：Idle、Below Normal、Normal、Above Normal、Hight、RealTime,(一般默认为Normal)
+        RealTime优先级很高，能干扰操作系统任务，需要“提高调度优先级”的特权
+        线程优先级7个：Idle、Lowest、Below Normal、Normal、Above Normal、Hightest、Time-Critical
+        基础优先级 = 优先级类 + 优先级
+        基础优先级自动调整：16~31系统不会自动提升，0~15才会被动态提升
+         */
+
     public interface IPoll : IDisposable
     {
         void Start();
+
         void Pause();
+
         void Stop();
+
         void Work();
     }
 
@@ -111,14 +156,20 @@ namespace ZHello.Async
     {
         protected Thread mainThread { get; set; }
         public Action PollWork { get; set; }
+
         public Poll()
         {
             mainThread = new Thread(Work);
         }
+
         public abstract void Dispose();
+
         public abstract void Pause();
+
         public abstract void Start();
+
         public abstract void Stop();
+
         public abstract void Work();
     }
 
@@ -126,6 +177,7 @@ namespace ZHello.Async
     {
         private ManualResetEvent _pauseEvent { get; set; }
         private ManualResetEvent _stopEvent { get; set; }
+
         public ManualResetEventPoller()
         {
             _pauseEvent = new ManualResetEvent(false);
@@ -133,7 +185,6 @@ namespace ZHello.Async
             Pause();
             mainThread.Start();
         }
-
 
         public override void Dispose()
         {
@@ -182,6 +233,7 @@ namespace ZHello.Async
     {
         private ManualResetEventSlim _pauseEvent { get; set; }
         private ManualResetEventSlim _stopEvent { get; set; }
+
         public ManualResetEventSlimPoller()
         {
             _pauseEvent = new ManualResetEventSlim(false);
@@ -189,7 +241,6 @@ namespace ZHello.Async
             Pause();
             mainThread.Start();
         }
-
 
         public override void Dispose()
         {
@@ -239,6 +290,7 @@ namespace ZHello.Async
     {
         private AutoResetEvent _stopEvent { get; set; }
         private AutoResetEvent _pauseEvent { get; set; }
+
         public AutoResetEventPoller()
         {
             _stopEvent = new AutoResetEvent(false);
@@ -294,6 +346,7 @@ namespace ZHello.Async
         private Semaphore chairs { get; set; }
         private Semaphore blocks { get; set; }
         private Queue<object> datas { get; set; }
+
         public SemaphoreStorage(int maxChairs, int maxBlocks)
         {
             chairs = new Semaphore(maxChairs, maxChairs);
@@ -345,7 +398,6 @@ namespace ZHello.Async
                 //Critial Section
                 MLock = false;
                 //Remainder section
-
             } while (true);
         }
 
@@ -376,19 +428,10 @@ namespace ZHello.Async
 
         public static void SpinLockMethod()
         {
-
             MSpinLock.Enter(ref MLockToken);
             MSpinLock.TryEnter(40, ref MLockToken);
             MSpinLock.Exit();
         }
-    }
-
-    /// <summary>
-    /// Dekker 互斥算法
-    /// </summary>
-    public class Dekker
-    {
-
     }
 }
 
@@ -402,23 +445,24 @@ public static class ThreadLocalT
         public int A { get; set; }
         public string Str { get; set; }
     }
+
     public class Obj
     {
         public Obj()
         {
-
         }
+
         public int A { get; set; } = 10;
         public string Str { get; set; } = "ok";
         public struct1 stru { get; set; } = new struct1 { A = 20, Str = "no" };
     }
+
     public static ThreadLocal<int> count = new ThreadLocal<int>();
     public static ThreadLocal<struct1> st = new ThreadLocal<struct1>();
     public static ThreadLocal<Obj> objs = new ThreadLocal<Obj>(() => { return new Obj(); });
 
     public static void Run()
     {
-
         Thread th1 = new Thread(() =>
             {
                 for (int i = 0; i < 1 << 20; i++)
@@ -458,7 +502,9 @@ public static class ThreadLocalT
         Trace.WriteLine("Main:" + objs.Value.Str);
     }
 
-
+    /// <summary>
+    /// 原子操作
+    /// </summary>
     public class Atom_Operaion
     {
         public volatile int IntAtom = 0;
@@ -479,21 +525,34 @@ public static class ThreadLocalT
             SpinWait spin = new SpinWait();
             spin.SpinOnce();
         }
-    }
 
-    public class Locker
-    {
-        public class SpinLock_T
+        public void P_Invoke()
         {
+            Thread.BeginThreadAffinity();
+            //该代码必须使用当前物理操作系统线程来执行
+            //P/Invoke Native Code
+            Thread.EndThreadAffinity();
 
-        }
-        public class KernalLock
-        {
-            public class MyKernalHandle : WaitHandle
+            //设置上下文数据
+            CallContext.SetData("k1", "v1");
+            ThreadPool.QueueUserWorkItem(state =>
             {
+                //此时可以访问到上下文数据
+                Console.WriteLine($"Name={CallContext.GetData("k1")}");
+            });
+            //阻止当前线程的上下文流动
+            //提升应用程序性能
+            ExecutionContext.SuppressFlow();
+            ThreadPool.QueueUserWorkItem(state =>
+            {
+                //此时将访问不到上下文数据
+                Console.WriteLine($"Name={CallContext.GetData("k1")}");
+            });
+        }
 
-            }
+        public void ExecutionContextTest()
+        {
+
         }
     }
-
 }

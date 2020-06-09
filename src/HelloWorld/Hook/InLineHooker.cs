@@ -1,7 +1,187 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace ZHello.Hook
 {
+    /// <summary>
+    /// 
+    /// https://bbs.csdn.net/topics/391958344
+    /// </summary>
+    public unsafe class InLineHooker
+    {
+        byte[] jmp_inst =
+        {
+            0x50,                                              //push rax
+            0x48,0xB8,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90, //mov rax,target_addr
+            0x50,                                              //push rax
+            0x48,0x8B,0x44,0x24,0x08,                          //mov rax,qword ptr ss:[rsp+8]
+            0xC2,0x08,0x00                                     //ret 8
+        };
+
+        protected byte[] newInstrs = { 0xE9, 0x90, 0x90, 0x90, 0x90 }; //jmp target
+
+        public Dictionary<MethodBase, byte[]> Method = new Dictionary<MethodBase, byte[]>();
+
+        public void ReplaceMethod(MethodBase lMethod, MethodBase rMethod)
+        {
+            //确保jit过了
+            var typeHandles = lMethod.DeclaringType.GetGenericArguments().Select(t => t.TypeHandle).ToArray();
+            RuntimeHelpers.PrepareMethod(lMethod.MethodHandle, typeHandles);
+            typeHandles = rMethod.DeclaringType.GetGenericArguments().Select(t => t.TypeHandle).ToArray();
+            RuntimeHelpers.PrepareMethod(rMethod.MethodHandle, typeHandles);
+
+            //var lmptr = lMethod.MethodHandle.GetFunctionPointer();
+            //var rmptr = rMethod.MethodHandle.GetFunctionPointer();
+
+            //var lmSize = LDasm.SizeofMin5Byte((byte*)lmptr);
+            //var rmSize = LDasm.SizeofMin5Byte((byte*)rmptr);
+
+            //var lmBuff = new byte[lmSize];
+            //for (int i = 0; i < lmBuff.Length; i++)
+            //{
+            //    lmBuff[i] = ((byte*)lmptr)[i];
+            //}
+            //var rmBuff = new byte[rmSize];
+            //for (int i = 0; i < rmBuff.Length; i++)
+            //{
+            //    rmBuff[i] = ((byte*)rmptr)[i];
+            //}
+
+            uint oldProtect;
+            var rawMPtr = (byte*)rMethod.MethodHandle.GetFunctionPointer().ToPointer();
+            var needSize = LDasm.SizeofMin5Byte(rawMPtr);
+            var total_length = (int)needSize + 5;
+            byte[] code = new byte[total_length];
+            IntPtr ptr = Marshal.AllocHGlobal(total_length);
+            //code[0] = 0xcc;//调试用
+            for (int i = 0; i < needSize; i++)
+            {
+                code[i] = rawMPtr[i];
+            }
+            code[needSize] = 0xE9;
+            fixed (byte* p = &code[needSize + 1])
+            {
+                *((uint*)p) = (uint)rawMPtr - (uint)ptr - 5;
+            }
+            Marshal.Copy(code, 0, ptr, total_length);
+            NativeAPI.VirtualProtect(ptr, (uint)total_length, Protection.PAGE_EXECUTE_READWRITE, out oldProtect);
+            //RuntimeHelpers.PrepareMethod(lMethod.MethodHandle);
+            *((uint*)lMethod.MethodHandle.Value.ToPointer() + 2) = (uint)ptr;
+        }
+
+        public void HookMethod(MethodBase rawMethod, MethodBase hookMethod, MethodBase originalMethod)
+        {
+            //确保jit过了
+            var typeHandles = rawMethod.DeclaringType.GetGenericArguments().Select(t => t.TypeHandle).ToArray();
+            RuntimeHelpers.PrepareMethod(rawMethod.MethodHandle, typeHandles);
+            var rawMethodPtr = (byte*)rawMethod.MethodHandle.GetFunctionPointer().ToPointer();
+            var hookMethodPtr = (byte*)hookMethod.MethodHandle.GetFunctionPointer().ToPointer();
+            //生成跳转指令，使用相对地址，用于跳转到用户定义函数
+            fixed (byte* newInstrPtr = newInstrs)
+            {
+                *(uint*)(newInstrPtr + 1) = (uint)hookMethodPtr - (uint)rawMethodPtr - 5;
+            }
+            //将对占位函数的调用指向原函数，实现调用占位函数即调用原始函数的功能
+            if (originalMethod != null)
+            {
+                if (Environment.Is64BitProcess)
+                {
+                    MakePlacholderMethodCallPointsToRawMethod_x64(originalMethod, rawMethod.MethodHandle.GetFunctionPointer());
+                }
+                else
+                {
+                    MakePlacholderMethodCallPointsToRawMethod_x86(originalMethod, rawMethod.MethodHandle.GetFunctionPointer());
+                }
+            }
+            //并且将对原函数的调用指向跳转指令，以此实现将对原始目标函数的调用跳转到用户定义函数执行的目的
+            uint oldProtect;
+            //系统方法没有写权限，需要修改页属性
+            NativeAPI.VirtualProtect((IntPtr)rawMethodPtr, 5, Protection.PAGE_EXECUTE_READWRITE, out oldProtect);
+            for (int i = 0; i < newInstrs.Length; i++)
+            {
+                *(rawMethodPtr + i) = newInstrs[i];
+            }
+        }
+
+        /// <summary>
+        /// 将对originalMethod的调用指向原函数
+        /// </summary>
+        /// <param name="originalMethod"></param>
+        protected void MakePlacholderMethodCallPointsToRawMethod_x86(MethodBase originalMethod,IntPtr pMethod)
+        {
+            uint oldProtect;
+            var rawMPtr = (byte*)pMethod.ToPointer();
+            var needSize = LDasm.SizeofMin5Byte(rawMPtr);
+            var total_length = (int)needSize + 5;
+            byte[] code = new byte[total_length];
+            IntPtr ptr = Marshal.AllocHGlobal(total_length);
+            //code[0] = 0xcc;//调试用
+            for (int i = 0; i < needSize; i++)
+            {
+                code[i] = rawMPtr[i];
+            }
+            code[needSize] = 0xE9;
+            fixed (byte* p = &code[needSize + 1])
+            {
+                *((uint*)p) = (uint)rawMPtr - (uint)ptr - 5;
+            }
+            Marshal.Copy(code, 0, ptr, total_length);
+            NativeAPI.VirtualProtect(ptr, (uint)total_length, Protection.PAGE_EXECUTE_READWRITE, out oldProtect);
+            RuntimeHelpers.PrepareMethod(originalMethod.MethodHandle);
+            *((uint*)originalMethod.MethodHandle.Value.ToPointer() + 2) = (uint)ptr;
+        }
+
+        protected void MakePlacholderMethodCallPointsToRawMethod_x64(MethodBase method, IntPtr pMethod)
+        {
+            uint oldProtect;
+            var rawMethodPtr = (byte*)pMethod.ToPointer();
+            var needSize = LDasm.SizeofMin5Byte(rawMethodPtr);
+            byte[] src_instr = new byte[needSize];
+            for (int i = 0; i < needSize; i++)
+            {
+                src_instr[i] = rawMethodPtr[i];
+            }
+            fixed (byte* p = &jmp_inst[3])
+            {
+                *((ulong*)p) = (ulong)(rawMethodPtr + needSize);
+            }
+            var totalLength = src_instr.Length + jmp_inst.Length;
+            IntPtr ptr = Marshal.AllocHGlobal(totalLength);
+            Marshal.Copy(src_instr, 0, ptr, src_instr.Length);
+            Marshal.Copy(jmp_inst, 0, ptr + src_instr.Length, jmp_inst.Length);
+            NativeAPI.VirtualProtect(ptr, (uint)totalLength, Protection.PAGE_EXECUTE_READWRITE, out oldProtect);
+            RuntimeHelpers.PrepareMethod(method.MethodHandle);
+            *((ulong*)((uint*)method.MethodHandle.Value.ToPointer() + 2)) = (ulong)ptr;
+        }
+    }
+
+    public enum Protection
+    {
+        PAGE_NOACCESS = 0x01,
+        PAGE_READONLY = 0x02,
+        PAGE_READWRITE = 0x04,
+        PAGE_WRITECOPY = 0x08,
+        PAGE_EXECUTE = 0x10,
+        PAGE_EXECUTE_READ = 0x20,
+        PAGE_EXECUTE_READWRITE = 0x40,
+        PAGE_EXECUTE_WRITECOPY = 0x80,
+        PAGE_GUARD = 0x100,
+        PAGE_NOCACHE = 0x200,
+        PAGE_WRITECOMBINE = 0x400
+    }
+
+    public class NativeAPI
+    {
+        [DllImport("kernel32")]
+        public static extern bool VirtualProtect(IntPtr lpAddress, uint dwSize, Protection flNewProtect, out uint lpflOldProtect);
+    }
+
     /// <summary>
     /// 用于计算汇编指令长度，使用的是BlackBone的LDasm.c中的算法，我把他翻译成C#了
     /// </summary>
@@ -627,7 +807,7 @@ namespace ZHello.Hook
 
                 code = (void*)((ulong)code + Length);
 
-            } while (Length>0);
+            } while (Length > 0);
 
             return Result;
         }
@@ -641,14 +821,14 @@ namespace ZHello.Hook
             s = rexw = pr_66 = pr_67 = 0;
 
             /* dummy check */
-            if ((int)code==0)
+            if ((int)code == 0)
                 return 0;
 
             /* init output data */
             //memset(ld, 0, sizeof(ldasm_data));
 
             /* phase 1: parse prefixies */
-            while ((cflags(*p) & OP_PREFIX)!=0)
+            while ((cflags(*p) & OP_PREFIX) != 0)
             {
                 if (*p == 0x66)
                     pr_66 = 1;
@@ -691,19 +871,20 @@ namespace ZHello.Hook
                 op = *p++; s++;
                 ld.opcd_size++;
                 f = cflags_ex(op);
-                if ((f & OP_INVALID)!=0)
+                if ((f & OP_INVALID) != 0)
                 {
                     ld.flags |= F_INVALID;
                     return s;
                 }
                 /* for SSE instructions */
-                if ((f & OP_EXTENDED)!=0)
+                if ((f & OP_EXTENDED) != 0)
                 {
                     op = *p++; s++;
                     ld.opcd_size++;
                 }
             }
-            else {
+            else
+            {
                 f = cflags(op);
                 /* pr_66 = pr_67 for opcodes A0-A3 */
                 if (op >= 0xA0 && op <= 0xA3)
@@ -711,7 +892,7 @@ namespace ZHello.Hook
             }
 
             /* phase 3: parse ModR/M, SIB and DISP */
-            if ((f & OP_MODRM)!=0)
+            if ((f & OP_MODRM) != 0)
             {
                 byte mod = (byte)(*p >> 6);
                 byte ro = (byte)((*p & 0x38) >> 3);
@@ -727,7 +908,7 @@ namespace ZHello.Hook
                     f |= OP_DATA_I16_I32_I64;
 
                 /* is SIB byte exist? */
-                if (mod != 3 && rm == 4 && !(!is64 && pr_67!=0))
+                if (mod != 3 && rm == 4 && !(!is64 && pr_67 != 0))
                 {
                     ld.sib = *p++; s++;
                     ld.flags |= F_SIB;
@@ -751,12 +932,13 @@ namespace ZHello.Hook
                                     ld.flags |= F_RELATIVE;
                             }
                         }
-                        else if (pr_67!=0)
+                        else if (pr_67 != 0)
                         {
                             if (rm == 6)
                                 ld.disp_size = 2;
                         }
-                        else {
+                        else
+                        {
                             if (rm == 5)
                                 ld.disp_size = 4;
                         }
@@ -767,14 +949,14 @@ namespace ZHello.Hook
                     case 2:
                         if (is64)
                             ld.disp_size = 4;
-                        else if (pr_67!=0)
+                        else if (pr_67 != 0)
                             ld.disp_size = 2;
                         else
                             ld.disp_size = 4;
                         break;
                 }
 
-                if (ld.disp_size>0)
+                if (ld.disp_size > 0)
                 {
                     ld.disp_offset = (byte)(p - (byte*)code);
                     p += ld.disp_size;
@@ -784,20 +966,20 @@ namespace ZHello.Hook
             }
 
             /* phase 4: parse immediate data */
-            if (rexw!=0 && (f & OP_DATA_I16_I32_I64)!=0)
+            if (rexw != 0 && (f & OP_DATA_I16_I32_I64) != 0)
                 ld.imm_size = 8;
-            else if ((f & OP_DATA_I16_I32)!=0 || (f & OP_DATA_I16_I32_I64)!=0)
+            else if ((f & OP_DATA_I16_I32) != 0 || (f & OP_DATA_I16_I32_I64) != 0)
                 ld.imm_size = (byte)(4 - (pr_66 << 1));
 
             /* if exist, add OP_DATA_I16 and OP_DATA_I8 size */
             ld.imm_size += (byte)(f & 3);
 
-            if ((ld.imm_size)!=0)
+            if ((ld.imm_size) != 0)
             {
                 s += ld.imm_size;
                 ld.imm_offset = (byte)(p - (byte*)code);
                 ld.flags |= F_IMM;
-                if ((f & OP_RELATIVE)!=0)
+                if ((f & OP_RELATIVE) != 0)
                     ld.flags |= F_RELATIVE;
             }
 
