@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "../stdafx.h"
 #include "ProcessModifer.h"
 #include <Windows.h>
 #include <stdio.h>

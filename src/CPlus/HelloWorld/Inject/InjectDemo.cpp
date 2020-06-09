@@ -1,11 +1,6 @@
-// InjectDemo.cpp : Defines the entry point for the console application.
-//
-
-#include "stdafx.h"
+#include "../stdafx.h"
 #include <iostream>
 #include <windows.h>
-using namespace std;
-
 
 int Test_tmain(int argc, _TCHAR* argv[])
 {
@@ -13,8 +8,8 @@ int Test_tmain(int argc, _TCHAR* argv[])
 	void *pNativeDllRemote;
 	FARPROC pLoadLibrary;
 	TCHAR szNativeDllPath[_MAX_PATH] = _T("NativeDll.dll");
-	cout<<"input the process id to inject"<<endl;
-	cin>>pid;
+	//cout<<"input the process id to inject"<<endl;
+	//cin>>pid;
 	
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS,0,pid);
 	if (hProcess == 0)
@@ -41,4 +36,3 @@ int Test_tmain(int argc, _TCHAR* argv[])
 	::CloseHandle(hThread);
 	return 0;
 }
-

@@ -36,23 +36,6 @@ namespace ZHello.Hook
             typeHandles = rMethod.DeclaringType.GetGenericArguments().Select(t => t.TypeHandle).ToArray();
             RuntimeHelpers.PrepareMethod(rMethod.MethodHandle, typeHandles);
 
-            //var lmptr = lMethod.MethodHandle.GetFunctionPointer();
-            //var rmptr = rMethod.MethodHandle.GetFunctionPointer();
-
-            //var lmSize = LDasm.SizeofMin5Byte((byte*)lmptr);
-            //var rmSize = LDasm.SizeofMin5Byte((byte*)rmptr);
-
-            //var lmBuff = new byte[lmSize];
-            //for (int i = 0; i < lmBuff.Length; i++)
-            //{
-            //    lmBuff[i] = ((byte*)lmptr)[i];
-            //}
-            //var rmBuff = new byte[rmSize];
-            //for (int i = 0; i < rmBuff.Length; i++)
-            //{
-            //    rmBuff[i] = ((byte*)rmptr)[i];
-            //}
-
             uint oldProtect;
             var rawMPtr = (byte*)rMethod.MethodHandle.GetFunctionPointer().ToPointer();
             var needSize = LDasm.SizeofMin5Byte(rawMPtr);

@@ -1,12 +1,10 @@
-#include "stdafx.h"
+#include "../stdafx.h"
 #include "main.h"
 #include "ProcessModifer.h"
-
 
 main::main()
 {
 }
-
 
 main::~main()
 {
@@ -71,7 +69,6 @@ A2:10,B2:20
 Call Swap_Point
 A2:20,B2:10
 */
-
 
 int main(int argc, _TCHAR* argv[])
 {

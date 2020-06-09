@@ -23,13 +23,13 @@
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <Keyword>ManagedCProj</Keyword>
     <RootNamespace>HelloWorld</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CLRSupport>false</CLRSupport>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -43,7 +43,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CLRSupport>false</CLRSupport>
     <CharacterSet>Unicode</CharacterSet>
     <UseOfMfc>false</UseOfMfc>
@@ -110,7 +110,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PrecompiledHeader>Create</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <BrowseInformation>true</BrowseInformation>
@@ -148,21 +148,35 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="A.cpp" />
-    <ClCompile Include="HelloWorld.cpp" />
+    <ClCompile Include="CPlusExperiment.cpp" />
+    <ClCompile Include="Func_Class.cpp" />
+    <ClCompile Include="Experiment.cpp" />
+    <ClCompile Include="Func_Simple.cpp" />
+    <ClCompile Include="Inject\InjectDemo.cpp" />
+    <ClCompile Include="Inject\main.cpp" />
+    <ClCompile Include="Inject\ProcessModifer.cpp" />
+    <ClCompile Include="NativeDll\NativeDll.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Func_Struct.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="Inject\ReadMe.txt" />
+    <Text Include="NativeDll\ReadMe.txt" />
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Source.def" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="A.h" />
+    <ClInclude Include="Func_Class.h" />
+    <ClInclude Include="Func_Simple.h" />
+    <ClInclude Include="Inject\main.h" />
+    <ClInclude Include="Inject\ProcessModifer.h" />
+    <ClInclude Include="NativeDll\NativeDll.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="Func_Struct.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

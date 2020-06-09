@@ -628,7 +628,7 @@ namespace ZHello.Common
         public int Size => Symbol.Size;
         public long Value;
 
-        public StructMember(in SymbolInfo symbol, int offset)
+        public StructMember(SymbolInfo symbol, int offset)
         {
             Symbol = symbol;
             Offset = offset;

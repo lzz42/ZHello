@@ -1,10 +1,9 @@
-// HelloWorld.cpp: 
+// HelloWorld.cpp:
 
-
+#include "stdafx.h"
 #include <iostream>
 #include <stdio.h>
-#include "stdafx.h"
-#include "A.h"
+#include "Func_Struct.h"
 
 #define AUDIO32_t 0x7fffffff
 #define Random(x)(rand()%x)
@@ -18,21 +17,9 @@
 #endif
 #endif
 
-typedef struct IntroStruct
-{
-	const char* charsA;
-	const char* charsB;
-	int C;
-	bool A;
-	bool B;
-	char D;
-};
-
-IntroStruct curStruct;
-
 void PointerTest();
 void StructAndPointer();
-void TestStructMemoryAllocation(); 
+void TestStructMemoryAllocation();
 void ParamTest();
 void Swap1(int, int);
 void Swap2(int*, int*);
@@ -42,7 +29,7 @@ int main(int argc, char* argv[])
 {
 	//PointerTest();
 	ParamTest();
-    return 0;
+	return 0;
 }
 
 #pragma region 指针实验
@@ -79,7 +66,7 @@ void PointerTest()
 
 	//函数指针
 	//指向函数 void PointerTest()
-	void (*ptrPonterTest)();
+	void(*ptrPonterTest)();
 	ptrPonterTest = PointerTest;
 	//指向函数 int main(int argc, char* argv[])
 	int(*ptrMain)(int, char*[]);
@@ -128,7 +115,7 @@ void PointerTest()
 	printf("array+0:%d\n", sizeof(array + 0));
 }
 
-void Sort(int* begin, int* end, bool(*CompareFunc)(int, int)) 
+void Sort(int* begin, int* end, bool(*CompareFunc)(int, int))
 {
 	while (begin < end)
 	{
@@ -157,20 +144,20 @@ void ParamTest()
 	printf("a3:%d,b3:%d\n", a3, b3);
 }
 
-void Swap1(int a, int b) 
+void Swap1(int a, int b)
 {
 	a = a ^ b;
 	b = a ^ b;
 	a = a ^ b;
 }
 
-void Swap2(int* a, int* b) 
+void Swap2(int* a, int* b)
 {
 	*a = *a ^ *b;
 	*b = *a ^ *b;
 	*a = *a ^ *b;
 }
-void Swap3(int& a, int& b) 
+void Swap3(int& a, int& b)
 {
 	a = a ^ b;
 	b = a ^ b;
@@ -182,7 +169,6 @@ void Swap3(int& a, int& b)
 #pragma region  内存对齐
 
 /*内存对齐
-
 
 */
 
@@ -231,7 +217,7 @@ struct MyStruct4
 struct MyStruct5
 {
 	double d;//8
-	char b[13];//13->16 
+	char b[13];//13->16
 	int a;//4
 	char c;//1->4
 	// = 8+16+4+4=32
@@ -239,7 +225,7 @@ struct MyStruct5
 
 void StructAndPointer()
 {
-	struct MyStruct ms = { 22,'a',{123,456,789},{'x','y','z'} };	
+	struct MyStruct ms = { 22,'a',{123,456,789},{'x','y','z'} };
 	printf("%d\n", ms.a);
 	printf("%d\n", ms.b);
 	printf("%d\n", ms.c);
@@ -248,7 +234,7 @@ void StructAndPointer()
 	printf("%d\n", p->a);
 	printf("%d\n", p->b);
 	printf("%d\n", p->c);
-	printf("%d\n", p->d);	
+	printf("%d\n", p->d);
 }
 
 void TestStructMemoryAllocation()
@@ -264,144 +250,5 @@ void TestStructMemoryAllocation()
 	printf("%p\n", &p->a);
 	printf("%p\n", &p->c);
 }
-
-#pragma endregion
-
-#pragma region 导出函数
-
-#pragma region 简单函数
-
-extern "C" __declspec(dllexport)
-int Add(int a, int b)
-{
-#ifdef V1
-	return (a + b) * 10;
-#endif // V1
-#ifdef V2
-	return (a + b) * 100;
-#endif // V2
-	return a + b;
-}
-
-//IntPtr GetString(int a)
-char a1[10] = "12340678K";
-
-extern "C" __declspec(dllexport)
-char * GetString(int a)
-{
-#ifdef V1
-	a1[0] = 'V';
-	//c = "V1abcdefV1";
-#endif // V1
-#ifdef V2
-	a1[0] = 'B';
-	//c = "V2abcdefV2";
-#endif // V2
-	return a1;
-}
-//Intp
-//int GetStringLen(IntPtr str)
-extern "C" __declspec(dllexport)
-int GetStringLen(char* str)
-{
-	int len = strlen(str);
-#ifdef V1
-	len *= 10;
-#endif // V1
-#ifdef V2
-	len *= 100;
-#endif // V2
-	return len;
-}
-
-extern "C" __declspec(dllexport)
-char GetChar()
-{
-	char c = '0';
-#ifdef V1
-	c = 'G';
-#endif // V1
-#ifdef V2
-	c = 'G';
-#endif // V2
-	return c;
-}
-
-extern "C" __declspec(dllexport)
-char GetASCIIChar(int a)
-{
-	if (a+1 >= 48 && a+1 <= 126)
-	{
-		#ifdef V1
-		return toascii(a);
-		#endif // V1
-		#ifdef V2
-		return toascii(a + 1);
-		#endif // V2
-	}
-	else
-	{
-		return '!';
-	}
-	return '\n';
-}
-
-#pragma endregion
-
-#pragma region 结构体相关
-
-extern "C" __declspec(dllexport)
-int ImportStruct(IntroStruct* mystr)
-{
-	return 0;
-}
-
-extern "C" __declspec(dllexport)
-int ExportStruct(IntroStruct* mystr)
-{
-	return 0;
-}
-
-extern "C" __declspec(dllexport)
-int ImportStructs(IntroStruct** mystr,int count)
-{
-	return 0;
-}
-
-extern "C" __declspec(dllexport)
-int ExportStructs(IntroStruct** mystr,int* count)
-{
-	return 0;
-}
-
-#pragma endregion
-
-#pragma region 类相关
-
-extern "C" __declspec(dllexport)
-int ImportClass(A a)
-{
-	return 0;
-}
-
-extern "C" __declspec(dllexport)
-int ImportClasss(A* a)
-{
-	return 0;
-}
-
-extern "C" __declspec(dllexport)
-int ExportClass(A* a)
-{
-	return 0;
-}
-
-extern "C" __declspec(dllexport)
-int ExportClasss(A** a)
-{
-	return 0;
-}
-
-#pragma endregion
 
 #pragma endregion
