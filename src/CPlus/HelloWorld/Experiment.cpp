@@ -1,5 +1,3 @@
-// HelloWorld.cpp:
-
 #include "stdafx.h"
 #include <iostream>
 #include <stdio.h>

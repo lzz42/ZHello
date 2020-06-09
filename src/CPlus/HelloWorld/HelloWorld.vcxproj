@@ -95,7 +95,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Create</PrecompiledHeader>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\crptdll;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>
@@ -110,8 +110,8 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PrecompiledHeader>Create</PrecompiledHeader>
+      <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <BrowseInformation>true</BrowseInformation>
     </ClCompile>
@@ -148,17 +148,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="CPlusExperiment.cpp" />
     <ClCompile Include="Func_Class.cpp" />
     <ClCompile Include="Experiment.cpp" />
     <ClCompile Include="Func_Simple.cpp" />
     <ClCompile Include="Inject\InjectDemo.cpp" />
     <ClCompile Include="Inject\main.cpp" />
-    <ClCompile Include="Inject\ProcessModifer.cpp" />
-    <ClCompile Include="NativeDll\NativeDll.cpp" />
-    <ClCompile Include="stdafx.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-    </ClCompile>
+    <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="Func_Struct.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -173,8 +168,6 @@
     <ClInclude Include="Func_Class.h" />
     <ClInclude Include="Func_Simple.h" />
     <ClInclude Include="Inject\main.h" />
-    <ClInclude Include="Inject\ProcessModifer.h" />
-    <ClInclude Include="NativeDll\NativeDll.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Func_Struct.h" />
   </ItemGroup>

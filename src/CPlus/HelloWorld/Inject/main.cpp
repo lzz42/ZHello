@@ -1,14 +1,6 @@
-#include "../stdafx.h"
+#include "stdafx.h"
 #include "main.h"
 #include "ProcessModifer.h"
-
-main::main()
-{
-}
-
-main::~main()
-{
-}
 
 //传值调用
 void Swap_Value(int a, int b)
@@ -70,10 +62,10 @@ Call Swap_Point
 A2:20,B2:10
 */
 
-int main(int argc, _TCHAR* argv[])
-{
-	TestMethodCall();
-	//char name[] = "text.exe";
-	//ProcessModifer pr = ProcessModifer(name);
-	//pr.Begin();
-}
+//int main(int argc, _TCHAR* argv[])
+//{
+//	TestMethodCall();
+//	//char name[] = "text.exe";
+//	//ProcessModifer pr = ProcessModifer(name);
+//	//pr.Begin();
+//}
