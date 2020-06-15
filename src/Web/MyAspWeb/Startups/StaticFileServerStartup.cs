@@ -61,11 +61,11 @@ namespace MyAspWeb.Startups
 
             app.UseMiddleware(typeof(Middleware.RequestIPMiddleware));
 
-            app.UseBasicAuthenticateMiddleware(new Middleware.BasicUser()
+/*            app.UseBasicAuthenticateMiddleware(new Middleware.BasicUser()
             {
                 User = "flogin",
                 Password = "helloworld"
-            });
+            });*/
             var shareDirs = Configuration.GetValue<string>("SharedDir").Split(';');
             string bdir = null;
             if (shareDirs != null)

@@ -14,11 +14,34 @@ namespace ZHello
         private static void Main(string[] args)
         {
             Console.WriteLine("hello world...");
-            TaskManagerControl();
+            if (args == null)
+                return;
+            if(args.Length>2 && args[1].ToLower() =="zip")
+            {
+                switch (args[1].ToLower())
+                {
+                    case "zip":
+                    case "unzip":
+                        Zip_UnZip(args);
+                        break;
+                    default:
+                        break;
+                }
+
+            }
+/*            TaskManagerControl();
             Console.ReadLine();
-            //IsDebugMode();
-            //TestUser32Method();
-            Console.ReadKey();
+            Console.ReadKey();*/
+        }
+
+        private static void Zip_UnZip(string[] args)
+        {
+            var pa = args[1].ToLower();
+            string inf, ouf,charset;
+            for (int i = 1; i < args.Length; i++)
+            {
+
+            }
         }
 
         private static void InitMutex()

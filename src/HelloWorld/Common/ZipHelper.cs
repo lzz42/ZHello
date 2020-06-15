@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using ICSharpCode.SharpZipLib.Checksum;
 using ICSharpCode.SharpZipLib.Zip;
 
@@ -184,10 +185,10 @@ namespace HelloWorld.Zip
                 }
                 if (Directory.Exists(file))// 先当作目录处理如果存在这个目录就递归Copy该目录下面的文件
                 {
-                    string pPath = parentPath;
-                    pPath += file.Substring(file.LastIndexOf("\\") + 1);
-                    pPath += "\\";
-                    ZipSetp(file, s, pPath);
+                    var builder = new StringBuilder(parentPath);
+                    builder.Append(file.Substring(file.LastIndexOf("\\") + 1));
+                    builder.Append("\\");
+                    ZipSetp(file, s, builder.ToString());
                 }
                 else 
                 {
@@ -196,9 +197,10 @@ namespace HelloWorld.Zip
                     {
                         byte[] buffer = new byte[fs.Length];
                         fs.Read(buffer, 0, buffer.Length);
-
-                        string fileName = parentPath + file.Substring(file.LastIndexOf("\\") + 1);
-                        ZipEntry entry = new ZipEntry(fileName);
+                        var builder = new StringBuilder();
+                        builder.Append(parentPath);
+                        builder.Append(file.Substring(file.LastIndexOf("\\") + 1));
+                        ZipEntry entry = new ZipEntry(builder.ToString());
                         entry.DateTime = DateTime.Now;
                         entry.Size = fs.Length;
                         fs.Close();
