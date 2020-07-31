@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -14,10 +11,29 @@ namespace ZHello.Algorithm
     /// </summary>
     public class Alg_Dekker
     {
+        public static void Run_Dekker_Two()
+        {
+            var w1 = new Worker("Bob");
+            var w2 = new Worker("Max");
+            var dekker = new Dekker_Two(w1, w2);
+            var t1 = new Task(() =>
+            {
+                Thread.Sleep(Environment.TickCount % 1000);
+                dekker.RunD0();
+            });
+            var t2 = new Task(() =>
+            {
+                Thread.Sleep(200);
+                dekker.RunD1();
+            });
+            t1.Start();
+            t2.Start();
+        }
 
         public class Worker
         {
             public string Name { get; set; }
+
             public Worker(string name)
             {
                 Name = name;
@@ -36,36 +52,17 @@ namespace ZHello.Algorithm
             }
         }
 
-        public static void Run_Dekker_Two()
-        {
-            var w1 = new Worker("Bob");
-            var w2 = new Worker("Max");
-            var dekker = new Dekker_Two(w1,w2);
-            var t1 = new Task(() =>
-            {
-                Thread.Sleep(Environment.TickCount % 1000);
-                dekker.RunD0();
-            });
-            var t2 = new Task(() =>
-            {
-                Thread.Sleep(200);
-                dekker.RunD1();
-            });
-            t1.Start();
-            t2.Start();
-        }
-
         public class Dekker_Two
         {
-
             private readonly Worker[] Workers;
+            private readonly bool[] Flag = new bool[2] { false, false };
+
+            private int turn = 0;
+
             public Dekker_Two(Worker lw, Worker rw)
             {
                 Workers = new Worker[2] { lw, rw };
             }
-
-            private readonly bool[] Flag = new bool[2] { false, false };
-            private int turn = 0;
 
             public void RunD0()
             {
@@ -106,6 +103,5 @@ namespace ZHello.Algorithm
                 } while (true);
             }
         }
-
     }
 }

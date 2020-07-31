@@ -40,6 +40,8 @@ namespace ZHello.Base
         private static readonly MethodInfo s_SolutionParser_parseSolution;
         private static readonly PropertyInfo s_SolutionParser_projects;
 
+        public List<SolutionProject> Projects { get; private set; }
+
         static Solution()
         {
             s_SolutionParser = Type.GetType("Microsoft.Build.Construction.SolutionParser, Microsoft.Build, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", false, false);
@@ -50,8 +52,6 @@ namespace ZHello.Base
                 s_SolutionParser_parseSolution = s_SolutionParser.GetMethod("ParseSolution", BindingFlags.NonPublic | BindingFlags.Instance);
             }
         }
-
-        public List<SolutionProject> Projects { get; private set; }
 
         public Solution(string solutionFileName)
         {
@@ -85,6 +85,16 @@ namespace ZHello.Base
         private static readonly PropertyInfo s_ProjectInSolution_ProjectType;
         private static readonly PropertyInfo s_ProjectInSolution_Dependencies;
 
+        public string ProjectName { get; private set; }
+
+        public string RelativePath { get; private set; }
+
+        public string ProjectGuid { get; private set; }
+
+        public string ProjectType { get; private set; }
+
+        public ArrayList Dependencies { get; set; }
+
         static SolutionProject()
         {
             s_ProjectInSolution = Type.GetType("Microsoft.Build.Construction.ProjectInSolution, Microsoft.Build, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", false, false);
@@ -97,12 +107,6 @@ namespace ZHello.Base
                 s_ProjectInSolution_Dependencies = s_ProjectInSolution.GetProperty("Dependencies", BindingFlags.NonPublic | BindingFlags.Instance);
             }
         }
-
-        public string ProjectName { get; private set; }
-        public string RelativePath { get; private set; }
-        public string ProjectGuid { get; private set; }
-        public string ProjectType { get; private set; }
-        public ArrayList Dependencies { get; set; }
 
         public SolutionProject(object solutionProject)
         {

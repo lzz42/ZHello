@@ -103,15 +103,7 @@ namespace ZHello.Async
 {
     public class WinProcess
     {
-        public void TestMethod()
-        {
-            PrintThreadInfo("main after");
-            var s = GetString();
-            s.Wait();
-            PrintThreadInfo("main before");
-            Console.WriteLine("res:{0}", s.Result);
-            Console.ReadLine();
-        }
+        public static Dictionary<string, string> dic = new Dictionary<string, string>();
 
         public static async Task<string> GetString()
         {
@@ -143,8 +135,6 @@ namespace ZHello.Async
         [DllImport("Kernel32.dll", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Auto, EntryPoint = "IsWow64Process")]
         public static extern bool IsWow64Process(IntPtr handle, out bool result);
 
-        public static Dictionary<string, string> dic = new Dictionary<string, string>();
-
         public static void PrintThreadInfo(string msg = null)
         {
             Console.WriteLine("{0},Current Thread is：{1}", msg, Thread.CurrentThread.ManagedThreadId);
@@ -162,6 +152,16 @@ namespace ZHello.Async
         {
             PrintThreadInfo("has done");
             Console.WriteLine("has done");
+        }
+
+        public void TestMethod()
+        {
+            PrintThreadInfo("main after");
+            var s = GetString();
+            s.Wait();
+            PrintThreadInfo("main before");
+            Console.WriteLine("res:{0}", s.Result);
+            Console.ReadLine();
         }
     }
 }

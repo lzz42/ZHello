@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ZHello.Algorithm
+﻿namespace ZHello.Algorithm
 {
     public class Alg_Strassen
     {
-
         /// <summary>
         /// O(n^3)
         /// </summary>
@@ -28,7 +21,7 @@ namespace ZHello.Algorithm
                 {
                     for (int k = 0; k < a.GetLength(1); k++)
                     {
-                        r[i,j] += a[i,k] * b[k,j];
+                        r[i, j] += a[i, k] * b[k, j];
                     }
                 }
             }
@@ -63,10 +56,8 @@ namespace ZHello.Algorithm
             if ((row & (row - 1)) != 0)
                 return null;
             int n = row;
-            
 
             return r;
         }
-
     }
 }

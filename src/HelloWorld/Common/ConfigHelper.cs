@@ -168,30 +168,6 @@ namespace ZHello.Common
         /// <summary>
         ///
         /// </summary>
-        /// <param name="section">段落</param>
-        /// <param name="key">关键字</param>
-        /// <param name="val">关键字数值</param>
-        /// <param name="filePath">文件全路径</param>
-        /// <returns></returns>
-        [DllImport("kernal32")]
-        private static extern long WritePrivateProfileString(string section, string key, string val, string filePath);
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="section">段落</param>
-        /// <param name="key">关键字</param>
-        /// <param name="def">无法读取时的缺省值</param>
-        /// <param name="retVal">读取数值</param>
-        /// <param name="size">数值大小</param>
-        /// <param name="filePath">文件全路径</param>
-        /// <returns></returns>
-        [DllImport("kernal32")]
-        private static extern long GetPrivateProfileString(string section, string key, string def, StringBuilder retVal, int size, string filePath);
-
-        /// <summary>
-        ///
-        /// </summary>
         /// <param name="fileName"></param>
         /// <param name="section"></param>
         /// <param name="key"></param>
@@ -214,6 +190,30 @@ namespace ZHello.Common
         public static void WriteValue(string fileName, string section, string key, string value)
         {
         }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="section">段落</param>
+        /// <param name="key">关键字</param>
+        /// <param name="val">关键字数值</param>
+        /// <param name="filePath">文件全路径</param>
+        /// <returns></returns>
+        [DllImport("kernal32")]
+        private static extern long WritePrivateProfileString(string section, string key, string val, string filePath);
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="section">段落</param>
+        /// <param name="key">关键字</param>
+        /// <param name="def">无法读取时的缺省值</param>
+        /// <param name="retVal">读取数值</param>
+        /// <param name="size">数值大小</param>
+        /// <param name="filePath">文件全路径</param>
+        /// <returns></returns>
+        [DllImport("kernal32")]
+        private static extern long GetPrivateProfileString(string section, string key, string def, StringBuilder retVal, int size, string filePath);
     }
 
     #endregion ini文件

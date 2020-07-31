@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
+﻿using System.Diagnostics;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace ZHello.Algorithm
 {
@@ -29,12 +24,12 @@ namespace ZHello.Algorithm
                 //进入区
                 Flag[i] = true;
                 Turn = j;
-                while(Flag[j] && Turn == j)
+                while (Flag[j] && Turn == j)
                 {
                     Thread.Sleep(5);
                 }
                 //进入区
-                
+
                 //临界区
                 //TODO:
                 Visit_Resouce(i);
@@ -47,9 +42,9 @@ namespace ZHello.Algorithm
                 //剩余区
                 //TODO:
                 //剩余区
-
             } while (true);
         }
+
         private void Visit_Resouce(int i)
         {
             Trace.WriteLine("Visitor : " + i);
@@ -58,10 +53,8 @@ namespace ZHello.Algorithm
 
     public class Peterson_Algorithm_N
     {
-        private int N { get; set; }
-
-
         private int Turn = 0;
+        private int N { get; set; }
         private bool[] Flag { get; set; }
 
         public Peterson_Algorithm_N(int n)
@@ -96,7 +89,6 @@ namespace ZHello.Algorithm
                 //剩余区
                 //TODO:
                 //剩余区
-
             } while (true);
         }
 

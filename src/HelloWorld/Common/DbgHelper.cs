@@ -96,13 +96,6 @@ namespace ZHello.Common
         private IntPtr _hProcess;
         private bool _ownHandle;
 
-        public void Dispose()
-        {
-            Win32.SymCleanup(_hProcess);
-            if (_ownHandle)
-                Win32.CloseHandle(_hProcess);
-        }
-
         private PDB(IntPtr hProcess, bool ownHandle)
         {
             _hProcess = hProcess;
@@ -139,6 +132,13 @@ namespace ZHello.Common
                 return new PDB(hd, true);
             }
             throw new Win32Exception(Marshal.GetLastWin32Error());
+        }
+
+        public void Dispose()
+        {
+            Win32.SymCleanup(_hProcess);
+            if (_ownHandle)
+                Win32.CloseHandle(_hProcess);
         }
 
         /// <summary>
@@ -285,21 +285,6 @@ namespace ZHello.Common
             Win32.SymSetOptions(options);
             Win32.SymInitialize(handle, searchPath, true).ThrowIfWin32Failed();
             return new SymbolHandler(handle, false);
-        }
-
-        private static string GetDefaultSearchPath()
-        {
-            var path = Environment.GetEnvironmentVariable("_NT_SYMBOL_PATH");
-            if (path != null)
-            {
-                int index = path.IndexOf('*');
-                if (index < 0)
-                    return path;
-                path = path.Substring(index + 1, path.IndexOf('*', index + 1) - index - 1);
-                if (string.IsNullOrWhiteSpace(path))
-                    path = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            }
-            return path;
         }
 
         public static SymbolHandler Create(SymbolOptions options = SymbolOptions.CaseInsensitive | SymbolOptions.UndecorateNames, string searchPath = null)
@@ -579,6 +564,21 @@ namespace ZHello.Common
             }
             return null;
         }
+
+        private static string GetDefaultSearchPath()
+        {
+            var path = Environment.GetEnvironmentVariable("_NT_SYMBOL_PATH");
+            if (path != null)
+            {
+                int index = path.IndexOf('*');
+                if (index < 0)
+                    return path;
+                path = path.Substring(index + 1, path.IndexOf('*', index + 1) - index - 1);
+                if (string.IsNullOrWhiteSpace(path))
+                    path = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            }
+            return path;
+        }
     }
 
     internal static class Extensions
@@ -622,11 +622,12 @@ namespace ZHello.Common
     public sealed class StructMember
     {
         public readonly int Offset;
-        public StructDescriptor Parent { get; internal set; }
         public readonly SymbolInfo Symbol;
+        public long Value;
+        public StructDescriptor Parent { get; internal set; }
         public string Name => Symbol.Name;
         public int Size => Symbol.Size;
-        public long Value;
+        public int TypeId => Symbol.TypeIndex;
 
         public StructMember(SymbolInfo symbol, int offset)
         {
@@ -641,8 +642,6 @@ namespace ZHello.Common
             return member;
         }
 
-        public int TypeId => Symbol.TypeIndex;
-
         public override string ToString() => $"{Symbol.Name}, size={Symbol.Size}, offset={Offset}, typeid={Symbol.TypeIndex} tag={Symbol.Tag}";
     }
 
@@ -650,6 +649,16 @@ namespace ZHello.Common
     {
         private readonly Dictionary<string, StructMember> _membersByName;
         private readonly List<StructMember> _members;
+
+        public int Length { get; internal set; }
+
+        public int Count => _members.Count;
+
+        public bool IsReadOnly => throw new NotImplementedException();
+
+        StructMember IList<StructMember>.this[int index] { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+        public StructMember this[int index] => _members[index];
 
         internal StructDescriptor(int capacity = 8)
         {
@@ -666,16 +675,6 @@ namespace ZHello.Common
         {
             return _membersByName.TryGetValue(memberName, out var member) ? member : null;
         }
-
-        public int Length { get; internal set; }
-
-        public int Count => _members.Count;
-
-        public bool IsReadOnly => throw new NotImplementedException();
-
-        StructMember IList<StructMember>.this[int index] { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-        public StructMember this[int index] => _members[index];
 
         public void AddMember(StructMember member)
         {
@@ -803,6 +802,11 @@ namespace ZHello.Common
         PublicCode = 0x400000
     }
 
+    internal enum ProcessAccessMask : uint
+    {
+        Query = 0x400
+    }
+
     [DebuggerDisplay("{Name} {Value} {Scope} {Address}")]
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
     public struct SymbolInfo
@@ -842,11 +846,6 @@ namespace ZHello.Common
         public string Name;
     }
 
-    internal enum ProcessAccessMask : uint
-    {
-        Query = 0x400
-    }
-
     #endregion Data
 
     #region enum
@@ -854,13 +853,6 @@ namespace ZHello.Common
     internal delegate bool SymEnumerateModuleProc(string module, ulong dllBase, IntPtr context);
 
     internal delegate bool EnumSourceFilesCallback(SOURCEFILE sourceFile, IntPtr context);
-
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-    public struct SOURCEFILE
-    {
-        public ulong ModuleBase;
-        public IntPtr FileName;
-    }
 
     public enum BasicType
     {
@@ -977,16 +969,11 @@ namespace ZHello.Common
         IndirectVirtualBaseClass
     }
 
-    [StructLayout(LayoutKind.Sequential)]
-    internal struct FindChildrenParams
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+    public struct SOURCEFILE
     {
-        public int Count;
-        public int Start;
-
-        // hopefully no more than 256 members
-
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 400)]
-        public int[] Child;
+        public ulong ModuleBase;
+        public IntPtr FileName;
     }
 
     [StructLayout(LayoutKind.Explicit, Size = 16)]
@@ -1005,11 +992,25 @@ namespace ZHello.Common
         }
     }
 
+    [StructLayout(LayoutKind.Sequential)]
+    internal struct FindChildrenParams
+    {
+        public int Count;
+        public int Start;
+
+        // hopefully no more than 256 members
+
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 400)]
+        public int[] Child;
+    }
+
     #endregion enum
 
     [SuppressUnmanagedCodeSecurity]
     internal static class Win32
     {
+        public delegate bool EnumSymbolCallback(ref SymbolInfo symbol, uint symbolSize, IntPtr context);
+
         [DllImport("kernel32", SetLastError = true)]
         public static extern bool CloseHandle(IntPtr handle);
 
@@ -1040,8 +1041,6 @@ namespace ZHello.Common
 
         [DllImport("dbghelp", SetLastError = true)]
         public static extern bool SymFromName(IntPtr hProcess, string name, ref SymbolInfo symbol);
-
-        public delegate bool EnumSymbolCallback(ref SymbolInfo symbol, uint symbolSize, IntPtr context);
 
         [DllImport("dbghelp", SetLastError = true)]
         public static extern bool SymEnumSymbols(IntPtr hProcess, ulong baseOfDll, string mask, EnumSymbolCallback callback, IntPtr context);

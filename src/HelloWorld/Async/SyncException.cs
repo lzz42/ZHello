@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace ZHello.Async
 {
@@ -11,9 +8,8 @@ namespace ZHello.Async
      多线程异常处理问题
          */
 
-
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public class SyncException
     {
@@ -31,7 +27,6 @@ namespace ZHello.Async
 
         public static void TaskTest()
         {
-
             var source = new CancellationTokenSource();
 
             var task = new Task(() => { Work(); }, source.Token);
@@ -110,13 +105,11 @@ namespace ZHello.Async
             var t = new Thread(Work);
             t.Start();
             var e = t.ExecutionContext;
-
         }
 
         public static void ThreadPoolTest()
         {
             ThreadPool.QueueUserWorkItem((obj) => { Work(); }, null);
-
         }
 
         public static void Work()
@@ -131,12 +124,10 @@ namespace ZHello.Async
                 }
                 catch (Exception ex)
                 {
-
                     throw ex;
                 }
                 finally
                 {
-
                 }
             }
         }

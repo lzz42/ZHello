@@ -7,15 +7,19 @@ namespace ZHello.Algorithm
     /// </summary>
     public static class Alg_Banker
     {
+        public static int[] Available = new int[M];
+
+        public static int[][] Max = new int[N][];
+
+        public static int[][] Allocation = new int[N][];
+
+        public static int[][] Need = new int[N][];
+
         //n Number of Process
         //m Number of Resources
         private static int M = 1;
 
         private static int N = 1;
-        public static int[] Available = new int[M];
-        public static int[][] Max = new int[N][];
-        public static int[][] Allocation = new int[N][];
-        public static int[][] Need = new int[N][];
 
         public static bool Bigger(int[] x, int[] y)
         {

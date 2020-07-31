@@ -1,6 +1,4 @@
-﻿#pragma warning disable CS3003,CS3001
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace ZHello.Algorithm
@@ -21,32 +19,6 @@ namespace ZHello.Algorithm
         TV Value { get; set; }
 
         IDataItem<TK, TV> Make(TK tK, TV tV);
-    }
-
-    public class DataItem<TK, TV> : IDataItem<TK, TV>
-        where TK : class
-    {
-        public DataItem()
-        {
-        }
-
-        public TK Key { get; set; }
-        public TV Value { get; set; }
-
-        public IDataItem<TK, TV> Make(TK tK, TV tV)
-        {
-            return new DataItem<TK, TV>() { Key = tK, Value = tV };
-        }
-    }
-
-    public abstract class Cache<T, TK, TV> : ICache<T, TK, TV>
-        where T : IDataItem<TK, TV>
-    {
-        public abstract void Clear();
-
-        public abstract bool Get(ref T t);
-
-        public abstract void Set(T t);
     }
 
     public static class LruFunction
@@ -153,6 +125,33 @@ namespace ZHello.Algorithm
         }
     }
 
+    public class DataItem<TK, TV> : IDataItem<TK, TV>
+            where TK : class
+    {
+        public TK Key { get; set; }
+
+        public TV Value { get; set; }
+
+        public DataItem()
+        {
+        }
+
+        public IDataItem<TK, TV> Make(TK tK, TV tV)
+        {
+            return new DataItem<TK, TV>() { Key = tK, Value = tV };
+        }
+    }
+
+    public abstract class Cache<T, TK, TV> : ICache<T, TK, TV>
+        where T : IDataItem<TK, TV>
+    {
+        public abstract void Clear();
+
+        public abstract bool Get(ref T t);
+
+        public abstract void Set(T t);
+    }
+
     public class LRU<T, TK, TV> : Cache<T, TK, TV>
         where T : IDataItem<TK, TV>
     {
@@ -216,14 +215,11 @@ namespace ZHello.Algorithm
     public class LRU_K<T, TK, TV> : Cache<T, TK, TV>
         where T : IDataItem<TK, TV>
     {
+        public uint K { get; private set; }
+        public uint Cap { get; private set; }
+        public uint CapHistory { get; private set; }
         private LinkedList<Tuple<T, int>> mLinkedList_his { get; set; }
         private LinkedList<T> mLink { get; set; }
-
-        public uint K { get; private set; }
-
-        public uint Cap { get; private set; }
-
-        public uint CapHistory { get; private set; }
 
         public LRU_K(int cap, int capHistory, uint k)
         {
@@ -241,25 +237,6 @@ namespace ZHello.Algorithm
         {
             mLinkedList_his.Clear();
             mLink.Clear();
-        }
-
-        private void PushHistory(T t)
-        {
-            while (mLinkedList_his.Count >= CapHistory)
-            {
-                mLinkedList_his.RemoveLast();
-            }
-
-            if (mLinkedList_his.Count >= CapHistory)
-            {
-                //TODO:删除末尾的节点
-                mLinkedList_his.RemoveLast();
-                PushHistory(t);
-            }
-            else
-            {
-                mLinkedList_his.AddFirst(new Tuple<T, int>(t, 0));
-            }
         }
 
         public override bool Get(ref T t)
@@ -301,6 +278,25 @@ namespace ZHello.Algorithm
                 mLink.RemoveLast();
             }
             mLink.AddFirst(t);
+        }
+
+        private void PushHistory(T t)
+        {
+            while (mLinkedList_his.Count >= CapHistory)
+            {
+                mLinkedList_his.RemoveLast();
+            }
+
+            if (mLinkedList_his.Count >= CapHistory)
+            {
+                //TODO:删除末尾的节点
+                mLinkedList_his.RemoveLast();
+                PushHistory(t);
+            }
+            else
+            {
+                mLinkedList_his.AddFirst(new Tuple<T, int>(t, 0));
+            }
         }
     }
 
@@ -376,17 +372,13 @@ namespace ZHello.Algorithm
     public class Multi_Queue<T, TK, TV> : Cache<T, TK, TV>
         where T : IDataItem<TK, TV>
     {
+        public int Cap { get; set; }
+        public int CapHistory { get; set; }
+        public LinkedList<T>[] mListLinks { get; set; }
+        public LinkedList<Tuple<T, int>> mLink_History { get; set; }
         private int Priority { get; set; }
 
         private int K { get; set; }
-
-        public int Cap { get; set; }
-
-        public int CapHistory { get; set; }
-
-        public LinkedList<T>[] mListLinks { get; set; }
-
-        public LinkedList<Tuple<T, int>> mLink_History { get; set; }
 
         public Multi_Queue(int k, int cap, int capHistory)
         {

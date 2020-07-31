@@ -1,10 +1,53 @@
-﻿#pragma warning disable CS3003,CS3002,CS3001
-
-using System;
+﻿using System;
 using System.Diagnostics.Contracts;
 
 namespace ZHello
 {
+    //common language specification
+    public static class CLS
+    {
+        public static ushort MAXIMUM_CAPACITY_Ushort = 1 << (sizeof(ushort) - 1);
+        public static short MAXIMUM_CAPACITY_Short = 1 << (sizeof(short) - 1);
+        public static int MAXIMUM_CAPACITY_Int = 1 << (sizeof(int) - 1);
+        public static uint MAXIMUM_CAPACITY_Uint = 1 << (sizeof(uint) - 1);
+        public static long MAXIMUM_CAPACITY_Long = 1 << (sizeof(long) - 1);
+        public static ulong MAXIMUM_CAPACITY_Ulong = 1 << (sizeof(ulong) - 1);
+
+        public static int tableSizeFor_or(int c)
+        {
+            int n = c - 1;
+            n |= n >> 1;
+            n |= n >> 2;
+            n |= n >> 4;
+            n |= n >> 8;
+            n |= n >> 16;
+            n |= n >> 32;
+            return (n < 0) ? 1 : (n >= MAXIMUM_CAPACITY_Int) ? MAXIMUM_CAPACITY_Int : n + 1;
+        }
+
+        public static int tableSizeFor(int c)
+        {
+            int n = c - 1;
+            int s = sizeof(int);
+            for (int i = 0; i < s; i++)
+            {
+                n |= n >> (1 << i);
+            }
+            return (n < 0) ? 1 : (n >= MAXIMUM_CAPACITY_Int) ? MAXIMUM_CAPACITY_Int : n + 1;
+        }
+
+        public static ulong tableSizeFor(ulong c)
+        {
+            ulong n = c - 1;
+            int s = sizeof(ulong);
+            for (int i = 0; i < s; i++)
+            {
+                n |= n >> (1 << i);
+            }
+            return (n < 0) ? 1 : (n >= MAXIMUM_CAPACITY_Ulong) ? MAXIMUM_CAPACITY_Ulong : n + 1;
+        }
+    }
+
     /// <summary>
     /// 高效编程的奥秘
     /// 位操作技巧
@@ -81,51 +124,6 @@ namespace ZHello
             //a= --a
             //~~a = ~(-a)+1
             //a-1 = ~(-a)-> -a = ~(a-1)
-        }
-    }
-
-    //common language specification
-    public static class CLS
-    {
-        public static ushort MAXIMUM_CAPACITY_Ushort = 1 << (sizeof(ushort) - 1);
-        public static short MAXIMUM_CAPACITY_Short = 1 << (sizeof(short) - 1);
-        public static int MAXIMUM_CAPACITY_Int = 1 << (sizeof(int) - 1);
-        public static uint MAXIMUM_CAPACITY_Uint = 1 << (sizeof(uint) - 1);
-        public static long MAXIMUM_CAPACITY_Long = 1 << (sizeof(long) - 1);
-        public static ulong MAXIMUM_CAPACITY_Ulong = 1 << (sizeof(ulong) - 1);
-
-        public static int tableSizeFor_or(int c)
-        {
-            int n = c - 1;
-            n |= n >> 1;
-            n |= n >> 2;
-            n |= n >> 4;
-            n |= n >> 8;
-            n |= n >> 16;
-            n |= n >> 32;
-            return (n < 0) ? 1 : (n >= MAXIMUM_CAPACITY_Int) ? MAXIMUM_CAPACITY_Int : n + 1;
-        }
-
-        public static int tableSizeFor(int c)
-        {
-            int n = c - 1;
-            int s = sizeof(int);
-            for (int i = 0; i < s; i++)
-            {
-                n |= n >> (1 << i);
-            }
-            return (n < 0) ? 1 : (n >= MAXIMUM_CAPACITY_Int) ? MAXIMUM_CAPACITY_Int : n + 1;
-        }
-
-        public static ulong tableSizeFor(ulong c)
-        {
-            ulong n = c - 1;
-            int s = sizeof(ulong);
-            for (int i = 0; i < s; i++)
-            {
-                n |= n >> (1 << i);
-            }
-            return (n < 0) ? 1 : (n >= MAXIMUM_CAPACITY_Ulong) ? MAXIMUM_CAPACITY_Ulong : n + 1;
         }
     }
 }

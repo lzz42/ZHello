@@ -126,26 +126,25 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Algorithm\Alg_Dekker.cs" />
-    <Compile Include="Algorithm\Alg_KMP.cs" />
     <Compile Include="Algorithm\Alg_Strassen.cs" />
+    <Compile Include="Algorithm\Lib\CrcLib.cs" />
     <Compile Include="Algorithm\LRU.cs" />
     <Compile Include="Algorithm\LZW.cs" />
     <Compile Include="Algorithm\Alg_Peterson.cs" />
     <Compile Include="Async\SyncException.cs" />
     <Compile Include="Base\CSharp7.0.cs" />
-    <Compile Include="Base\HashTable_Learn.cs" />
-    <Compile Include="Base\Hash_Md5_Sha_Crc32.cs" />
     <Compile Include="Base\CallInfo.cs" />
-    <Compile Include="Base\Hash_Algorithm_Test.cs" />
     <Compile Include="Base\SpecialFunctionInvoke.cs" />
     <Compile Include="Base\TypeConverter_Test.cs" />
-    <Compile Include="Cecil\Errors.cs" />
     <Compile Include="Cecil\MonoCecilPractices.cs" />
     <Compile Include="CLR\AppDomainHelper.cs" />
     <Compile Include="CLR\GrammerParser.cs" />
     <Compile Include="Common\DbgHelper.cs" />
+    <Compile Include="Algorithm\Lib\HashLib.cs" />
+    <Compile Include="Algorithm\Lib\MD5Lib.cs" />
     <Compile Include="Common\ResouceHelper.cs" />
     <Compile Include="Common\SerializationHelper.cs" />
+    <Compile Include="Algorithm\Lib\SHALib.cs" />
     <Compile Include="Common\TrayHelper.cs" />
     <Compile Include="Common\UseUnmanagedLibrary.cs" />
     <Compile Include="Common\WebHelper.cs" />
@@ -157,7 +156,6 @@
     <Compile Include="GDI\ColorAlgorithm.cs" />
     <Compile Include="GDI\ImageConvert.cs" />
     <Compile Include="Common\LicenseHelper.cs" />
-    <Compile Include="GDI\NativeMethods.cs" />
     <Compile Include="GDI\Use_ColorMatrix.cs" />
     <Compile Include="Common\InjectionHelper.cs" />
     <Compile Include="Hook\Hooker.cs" />
@@ -180,12 +178,9 @@
     <Compile Include="MEF\ICal.cs" />
     <Compile Include="MEF\MEFClient.cs" />
     <Compile Include="Other\PipelineStyleProgramming.cs" />
-    <Compile Include="Common\SecurityHelper.cs" />
     <Compile Include="HelloWorld.cs" />
     <Compile Include="Algorithm\Sort_Algorithm.cs" />
-    <Compile Include="Async\AsyncHelper.cs" />
     <Compile Include="Async\Sync.cs" />
-    <Compile Include="Async\SystemInfo.cs" />
     <Compile Include="Async\ThreadSync.cs" />
     <Compile Include="Base\BaseKnowledge.cs" />
     <Compile Include="CLR\CLR.cs" />
@@ -207,8 +202,6 @@
     <Compile Include="OS\WindowsHook.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Algorithm\Algorithm.md" />
-    <None Include="Algorithm\LFU.md" />
     <None Include="Algorithm\LRU.md" />
     <None Include="App.config">
       <SubType>Designer</SubType>
@@ -250,9 +243,7 @@
     <EmbeddedResource Include="Res\ColorRing.png" />
     <EmbeddedResource Include="Res\ZIP.ico" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="AOP\MSEL_APO\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="Hook\LDasm.c" />
   </ItemGroup>

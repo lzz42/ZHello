@@ -11,6 +11,34 @@ namespace ZHello.MemoryLayout
 {
     public class EmitProgram
     {
+        public static void FCurrentFunction()
+        {
+            Console.WriteLine(":@@@@:" + MethodInfo.GetCurrentMethod().Name);
+        }
+
+        public static void TestStackLenght(int num = 0)
+        {
+            try
+            {
+                Console.WriteLine(num);
+                Thread.Sleep(1);
+                num++;
+                //int c = num;
+                if (true)
+                {
+                    TestStackLenght(num);
+                }
+            }
+            catch (StackOverflowException e)
+            {
+                return;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         private static void Main(string[] args)
         {
             MakeHelloWorldFunc();
@@ -42,34 +70,6 @@ namespace ZHello.MemoryLayout
         }
 
         #endregion IL指令的使用
-
-        public static void FCurrentFunction()
-        {
-            Console.WriteLine(":@@@@:" + MethodInfo.GetCurrentMethod().Name);
-        }
-
-        public static void TestStackLenght(int num = 0)
-        {
-            try
-            {
-                Console.WriteLine(num);
-                Thread.Sleep(1);
-                num++;
-                //int c = num;
-                if (true)
-                {
-                    TestStackLenght(num);
-                }
-            }
-            catch (StackOverflowException e)
-            {
-                return;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
     }
 
     #region Memory layout
@@ -125,50 +125,6 @@ namespace ZHello.MemoryLayout
         }
 
         [StructLayout(LayoutKind.Auto)]
-        public class LayoutKing_Auto
-        {
-            public bool bol;
-            public int a;
-            public byte b;
-            public short c;
-            public double d;
-            public string str;
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        public class LayoutKing_Sequential
-        {
-            public bool bol;
-            public int a;
-            public byte b;
-            public short c;
-            public double d;
-            public string str;
-        }
-
-        [StructLayout(LayoutKind.Explicit)]
-        public class Layout_Explicit
-        {
-            [FieldOffset(0)]
-            public bool bol;
-
-            [FieldOffset(1)]
-            public int a;
-
-            [FieldOffset(5)]
-            public byte b;
-
-            [FieldOffset(6)]
-            public short c;
-
-            [FieldOffset(8)]
-            public double d;
-
-            [FieldOffset(16)]
-            public string str;
-        }
-
-        [StructLayout(LayoutKind.Auto)]
         public struct LayoutKing_Auto_Struct
         {
             public bool bol;
@@ -192,6 +148,50 @@ namespace ZHello.MemoryLayout
 
         [StructLayout(LayoutKind.Explicit)]
         public struct Layout_Explicit_Struct
+        {
+            [FieldOffset(0)]
+            public bool bol;
+
+            [FieldOffset(1)]
+            public int a;
+
+            [FieldOffset(5)]
+            public byte b;
+
+            [FieldOffset(6)]
+            public short c;
+
+            [FieldOffset(8)]
+            public double d;
+
+            [FieldOffset(16)]
+            public string str;
+        }
+
+        [StructLayout(LayoutKind.Auto)]
+        public class LayoutKing_Auto
+        {
+            public bool bol;
+            public int a;
+            public byte b;
+            public short c;
+            public double d;
+            public string str;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public class LayoutKing_Sequential
+        {
+            public bool bol;
+            public int a;
+            public byte b;
+            public short c;
+            public double d;
+            public string str;
+        }
+
+        [StructLayout(LayoutKind.Explicit)]
+        public class Layout_Explicit
         {
             [FieldOffset(0)]
             public bool bol;

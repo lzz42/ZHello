@@ -1,6 +1,4 @@
-﻿#pragma warning disable CS3026,CS3001
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.Remoting.Messaging;
@@ -152,10 +150,72 @@ namespace ZHello.Async
         void Work();
     }
 
+    public static class ResetEvent_Semaphore_SpinLock
+    {
+        public static bool MLock = false;
+
+        public static bool MLockToken = false;
+
+        public static SpinLock MSpinLock = new SpinLock(false);
+
+        public static unsafe bool TestAndSet(bool* btarget)
+        {
+            bool res = *btarget;
+            *btarget = true;
+            return res;
+        }
+
+        public static unsafe void Method()
+        {
+            do
+            {
+                fixed (bool* temp = &MLock)
+                {
+                    while (TestAndSet(temp))
+                    {
+                        ;
+                    }
+                }
+                //Critial Section
+                MLock = false;
+                //Remainder section
+            } while (true);
+        }
+
+        public static unsafe void Swap(bool* a, bool* b)
+        {
+            bool t = *a;
+            *a = *b;
+            *b = t;
+        }
+
+        public static void WaitSemaphore(int t)
+        {
+            while (t <= 0)
+            {
+                ;
+            }
+
+            t--;
+        }
+
+        public static void SignalSemaphore(int t)
+        {
+            t++;
+        }
+
+        public static void SpinLockMethod()
+        {
+            MSpinLock.Enter(ref MLockToken);
+            MSpinLock.TryEnter(40, ref MLockToken);
+            MSpinLock.Exit();
+        }
+    }
+
     public abstract class Poll : IPoll
     {
-        protected Thread mainThread { get; set; }
         public Action PollWork { get; set; }
+        protected Thread mainThread { get; set; }
 
         public Poll()
         {
@@ -372,67 +432,6 @@ namespace ZHello.Async
             chairs.Release();
         }
     }
-
-    public static class ResetEvent_Semaphore_SpinLock
-    {
-        public static bool MLock = false;
-
-        public static unsafe bool TestAndSet(bool* btarget)
-        {
-            bool res = *btarget;
-            *btarget = true;
-            return res;
-        }
-
-        public static unsafe void Method()
-        {
-            do
-            {
-                fixed (bool* temp = &MLock)
-                {
-                    while (TestAndSet(temp))
-                    {
-                        ;
-                    }
-                }
-                //Critial Section
-                MLock = false;
-                //Remainder section
-            } while (true);
-        }
-
-        public static unsafe void Swap(bool* a, bool* b)
-        {
-            bool t = *a;
-            *a = *b;
-            *b = t;
-        }
-
-        public static void WaitSemaphore(int t)
-        {
-            while (t <= 0)
-            {
-                ;
-            }
-
-            t--;
-        }
-
-        public static void SignalSemaphore(int t)
-        {
-            t++;
-        }
-
-        public static bool MLockToken = false;
-        public static SpinLock MSpinLock = new SpinLock(false);
-
-        public static void SpinLockMethod()
-        {
-            MSpinLock.Enter(ref MLockToken);
-            MSpinLock.TryEnter(40, ref MLockToken);
-            MSpinLock.Exit();
-        }
-    }
 }
 
 /// <summary>
@@ -440,25 +439,10 @@ namespace ZHello.Async
 /// </summary>
 public static class ThreadLocalT
 {
-    public struct struct1
-    {
-        public int A { get; set; }
-        public string Str { get; set; }
-    }
-
-    public class Obj
-    {
-        public Obj()
-        {
-        }
-
-        public int A { get; set; } = 10;
-        public string Str { get; set; } = "ok";
-        public struct1 stru { get; set; } = new struct1 { A = 20, Str = "no" };
-    }
-
     public static ThreadLocal<int> count = new ThreadLocal<int>();
+
     public static ThreadLocal<struct1> st = new ThreadLocal<struct1>();
+
     public static ThreadLocal<Obj> objs = new ThreadLocal<Obj>(() => { return new Obj(); });
 
     public static void Run()
@@ -500,6 +484,25 @@ public static class ThreadLocalT
 
         Thread.Sleep(100);
         Trace.WriteLine("Main:" + objs.Value.Str);
+    }
+
+    public struct struct1
+    {
+        public int A { get; set; }
+        public string Str { get; set; }
+    }
+
+    public class Obj
+    {
+        public int A { get; set; } = 10;
+
+        public string Str { get; set; } = "ok";
+
+        public struct1 stru { get; set; } = new struct1 { A = 20, Str = "no" };
+
+        public Obj()
+        {
+        }
     }
 
     /// <summary>
@@ -552,7 +555,6 @@ public static class ThreadLocalT
 
         public void ExecutionContextTest()
         {
-
         }
     }
 }

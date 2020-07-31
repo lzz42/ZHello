@@ -22,17 +22,16 @@ namespace ZHello.Algorithm
             /// </summary>
             Eating,
         }
-        
+
         /// <summary>
         /// 哲学家
         /// </summary>
         public class Philosopher
         {
             private SemaphoreSlim x_sem = new SemaphoreSlim(0, 1);
+            private int x_count;
             public SemaphoreSlim Mutex { get; set; }
             public SemaphoreSlim Next { get; set; }
-
-            private int x_count;
             public int Next_Count { get; set; }
             public PhilosopherState State { get; set; }
 

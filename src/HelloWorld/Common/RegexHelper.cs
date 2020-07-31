@@ -14,13 +14,5 @@ namespace ZHello.Common
             var res = regex.IsMatch(value);
             return res;
         }
-
-        public static void ReplaceStr()
-        {
-        }
-
-        public static void PickStr()
-        {
-        }
     }
 }

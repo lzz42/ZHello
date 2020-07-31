@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 
@@ -7,12 +6,12 @@ namespace ZHello.Base
 {
     public class BaseKnowledge
     {
-        /// <summary>
-        /// 编译器条件编译
-        /// </summary>
-        [Conditional(conditionString: "Release")]
-        private static void Fun1()
+        public interface ITest
         {
+            string S { get; set; }
+            Delegate MDelegate { get; set; }
+
+            void Func1();
         }
 
         /// <summary>
@@ -33,18 +32,12 @@ namespace ZHello.Base
             return k.ToString().GetHashCode().ToString();
         }
 
-        public interface ITest
+        /// <summary>
+        /// 编译器条件编译
+        /// </summary>
+        [Conditional(conditionString: "Release")]
+        private static void Fun1()
         {
-            string S { get; set; }
-            Delegate MDelegate { get; set; }
-
-            void Func1();
-        }
-
-        public abstract class BClass
-        {
-            public virtual string S { get; set; }
-            public abstract string AS { get; set; }
         }
 
         private static void Main()
@@ -79,6 +72,12 @@ namespace ZHello.Base
         {
             //throw new NotImplementedException();
             var ass = args.LoadedAssembly;
+        }
+
+        public abstract class BClass
+        {
+            public virtual string S { get; set; }
+            public abstract string AS { get; set; }
         }
     }
 }
