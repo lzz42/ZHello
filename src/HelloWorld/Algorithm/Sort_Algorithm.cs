@@ -81,7 +81,7 @@
         /// </summary>
         /// <param name="a"></param>
         /// <param name="b"></param>
-        public static void Swap(int a, int b)
+        public static void Swap(ref int a,ref int b)
         {
             //最常见的形式也是最广泛的形式 采用第三个中间变量缓存引用或者值
             var t = a;
@@ -98,26 +98,26 @@
         }
 
         /// <summary>
-        /// 冒泡排序算法
+        /// 冒泡排序算法时间复杂度n^2
         /// </summary>
-        /// <param name="collection"></param>
-        public static void Bubble_Sort(int[] collection)
+        /// <param name="a"></param>
+        public static void Bubble_Sort(int[] a)
         {
-            System.Diagnostics.Contracts.Contract.Requires(collection != null && collection.Length > 0);
+            System.Diagnostics.Contracts.Contract.Requires(a != null && a.Length > 0);
             //遍历所有待排序项
-            for (int i = 0; i < collection.Length; i++)
+            for (int i = 0; i < a.Length; i++)
             {
                 //若每一个都比前一个小 则结束排序循环
                 var k = false;
                 //比较前【0-N-i】项依次比较相邻的两项 将最大值放入结尾
-                for (int j = 0; j < collection.Length - 1 - i; j++)
+                for (int j = 0; j < a.Length - 1 - i; j++)
                 {
-                    if (collection[j] > collection[j + 1])
+                    if (a[j] > a[j + 1])
                     {
                         k = true;
-                        collection[j] = collection[j] ^ collection[j + 1];
-                        collection[j + 1] = collection[j] ^ collection[j + 1];
-                        collection[j] = collection[j] ^ collection[j + 1];
+                        a[j] = a[j] ^ a[j + 1];
+                        a[j + 1] = a[j] ^ a[j + 1];
+                        a[j] = a[j] ^ a[j + 1];
                     }
                 }
                 //若没有调整排序的 则说明该序列已完全排序好 直接退出即可
@@ -128,33 +128,42 @@
             }
         }
 
-        /// <summary>
-        /// 插入排序算法
-        /// </summary>
-        /// <param name="collection"></param>
-        public static void Insertion_Sort(int[] collection)
+        public enum Rule
         {
-            System.Diagnostics.Contracts.Contract.Requires(collection != null && collection.Length > 0);
+            /// <summary>
+            /// 升序 非降序
+            /// </summary>
+            ASC,
+            /// <summary>
+            /// 降序 非升序
+            /// </summary>
+            DESC,
+        }
+
+        /// <summary>
+        /// 插入排序算法时间复杂度n^2
+        /// </summary>
+        /// <param name="a"></param>
+        public static void Insertion_Sort(int[] a, Rule rule = Rule.ASC)
+        {
+            if (a == null || a.Length < 2)
+                return;
+            int j = 0;
             //从第二项开始查找 因为第一项已经排好序
-            for (int i = 1; i < collection.Length; i++)
+            for (int i = 1; i < a.Length; i++)
             {
-                //拿出要插入的项
-                var key = collection[i];
-                var j = i - 1;
-                //依次倒序比较前面排好序的项 找到待插入项位置
-                while (collection[j] > key)
+                //要插入的项
+                var key = a[i];
+                for (j = i - 1; j > 0; j--)
                 {
-                    //若前一项大于 待插入项 则该项前移
-                    collection[j + 1] = collection[j];
-                    j--;
-                    //若到达第一项则 停止比较
-                    if (j < 0)
-                    {
+                    if (rule == Rule.ASC && a[j] <= key)
                         break;
-                    }
+                    else if (rule == Rule.DESC && a[j] >= key)
+                        break;
+                    a[j + 1] = a[j];
                 }
-                //将待插入项放入 找到的位置
-                collection[j + 1] = key;
+                //将待插入项放入 找到的位置（该位置的原内容由于比Key大往后移动了）
+                a[j + 1] = key;
             }
         }
 
@@ -164,7 +173,6 @@
         /// <param name="source">待排序队列</param>
         public static void DirectInsertSort(int[] source)
         {
-            System.Diagnostics.Contracts.Contract.Requires(source != null && source.Length > 0);
             for (int i = 1; i < source.Length; i++)
             {
                 if (source[i] < source[i - 1])
