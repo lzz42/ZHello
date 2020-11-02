@@ -1,5 +1,4 @@
 #pragma once
-class MemoryAlignment
-{
-};
+#include "stdafx.h"
 
+void MemoryAlignmentTest();

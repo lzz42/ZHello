@@ -1,5 +1,3 @@
 #pragma once
-class Func_Class
-{
-};
 
+#include "stdafx.h"

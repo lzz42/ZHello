@@ -1,6 +1,3 @@
 #pragma once
-class Func_Struct
-{
-};
 
-
+#include "stdafx.h"

@@ -36,6 +36,7 @@ void Sort(int* begin, int* end, bool(*CompareFunc)(int, int))
 
 void PointerTest()
 {
+	printf("指针测试 \n");
 	//声明指针
 	int* konwnTypePtr;
 	int *p1, *p12;

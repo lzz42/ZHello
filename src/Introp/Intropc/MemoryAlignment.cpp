@@ -72,9 +72,9 @@ void StructAndPointer()
 	printf("%d\n", p->d);
 }
 
-void TestStructMemoryAllocation()
+void MemoryAlignmentTest()
 {
-	printf("_______________________\n");
+	printf("ÄÚ´æ¶ÔÆë²âÊÔ\n");
 	printf("%d\n", sizeof(MyStruct2));
 	printf("%d\n", sizeof(MyStruct3));
 	printf("%d\n", sizeof(MyStruct4));

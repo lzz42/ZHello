@@ -1,4 +1,4 @@
-#define V1
+//#define V1
 
 #include "stdafx.h"
 #include "Func_Simple.h"
@@ -6,84 +6,131 @@
 #include <ctype.h>
 
 #ifdef __CPLUSPLUS__
-	
-#endif // 
 
+#endif //
 
-
-#pragma region 简单函数
-
-extern "C" __declspec(dllexport)
+/// <summary>
+/// 值传递
+/// 返回整形
+/// </summary>
+/// <param name="a"></param>
+/// <param name="b"></param>
+/// <returns></returns>
 int Add(int a, int b)
 {
 #ifdef V1
 	return (a + b) * 10;
-#endif // V1
+#else
 #ifdef V2
 	return (a + b) * 100;
-#endif // V2
+#else
 	return a + b;
-}
-
-char a1[10] = "12340678K";
-
-extern "C" __declspec(dllexport)
-char * GetString(int a)
-{
-#ifdef V1
-	a1[0] = 'V';
-	//c = "V1abcdefV1";
-#endif // V1
-#ifdef V2
-	a1[0] = 'B';
-	//c = "V2abcdefV2";
 #endif // V2
-	return a1;
+#endif // V1
 }
 
-extern "C" __declspec(dllexport)
-int GetStringLen(char* str)
+/// <summary>
+/// 引用传递
+/// 返回一个字符串
+/// </summary>
+/// <param name="str1"></param>
+/// <param name="str2"></param>
+/// <returns></returns>
+char* AddStr(char* str1, char* str2)
+{
+	int len1 = strlen(str1);
+	int len2 = strlen(str2);
+	if (len1 <= 0 && len2 <= 0)
+	{
+		return NULL;
+	}
+	char* rec = (char*)malloc(sizeof(char) * (len1 + len2 + 1));
+	for (int i = 0; i < len1; i++)
+	{
+		rec[i] = str1[i];
+	}
+	for (int i = 0; i < len2; i++)
+	{
+		rec[i + len1] = str2[i];
+	}
+	rec[len1 + len2] = '\0';
+	return rec;
+}
+
+/// <summary>
+///
+/// </summary>
+/// <param name="str"></param>
+/// <param name="a"></param>
+/// <returns></returns>
+char GetChar(char* str, int a)
 {
 	int len = strlen(str);
-#ifdef V1
-	len *= 10;
-#endif // V1
-#ifdef V2
-	len *= 100;
-#endif // V2
-	return len;
+	if (a < 0)
+		return NULL;
+	if (a >= len)
+		return NULL;
+	return str[a];
 }
 
-extern "C" __declspec(dllexport)
-char GetChar()
+/// <summary>
+/// 引用传递修改传入值内容
+/// </summary>
+/// <param name="str"></param>
+/// <param name="len"></param>
+void ToUpper(char* str, int len)
 {
-	char c = '0';
-#ifdef V1
-	c = 'G';
-#endif // V1
-#ifdef V2
-	c = 'G';
-#endif // V2
-	return c;
+	if (len <= 0)
+		return;
+	int d = 'A' - 'a';
+	for (int i = 0; i < len; i++)
+	{
+		if (str[i] >= 'a' && str[i] <= 'z')
+		{
+			str[i] += d;
+		}
+	}
 }
 
-extern "C" __declspec(dllexport)
-char GetASCIIChar(int a)
+/// <summary>
+///
+/// </summary>
+/// <param name="str"></param>
+/// <param name="len"></param>
+void ToLower(char* str, int len)
 {
-	if (a + 1 >= 48 && a + 1 <= 126)
+	if (len <= 0)
+		return;
+	int d = 'A' - 'a';
+	for (int i = 0; i < len; i++)
 	{
-#ifdef V1
-		return toascii(a);
-#endif // V1
-#ifdef V2
-		return toascii(a + 1);
-#endif // V2
+		char c = str[i];
+		if (c >= 'A' && c <= 'Z')
+		{
+			str[i] = (char)(c - d);
+		}
 	}
-	else
-	{
-		return '!';
-	}
-	return '\n';
 }
 
-#pragma endregion
+void Func_Simple_Test()
+{
+	printf("导出函数测试\n");
+	int a = 100, b = 200;
+	int c = Add(a, b);
+
+	printf("Add \t:%d\n", c);
+	char* s1 = new char[5]{ "abcd" };
+	char* s2 = new char[5]{ "1234" };
+	char* s3 = AddStr(s1, s2);
+	free(s3);
+	printf("Add \t:%s\n");
+
+	ToUpper(s1, 4);
+	ToUpper(s2, 4);
+	printf("ToUpper \t:%s\n", s1);
+	printf("ToUpper \t:%s\n", s2);
+	ToLower(s1, 4);
+	ToLower(s2, 4);
+	printf("ToLower \t:%s\n", s1);
+	printf("ToLower \t:%s\n", s2);
+}

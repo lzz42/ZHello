@@ -27,6 +27,7 @@ void Swap3(int& a, int& b)
 
 void ParamTest()
 {
+	printf("´«²Î²âÊÔ \n");
 	int a1 = 10, b1 = 20;
 	int a2 = 10, b2 = 20;
 	int a3 = 10, b3 = 20;
