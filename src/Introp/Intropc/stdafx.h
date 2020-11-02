@@ -14,5 +14,6 @@
 #include <tchar.h>
 #include "MSCorEE.h"
 #include "metahost.h"
+#include  <Windows.h>
 
 // TODO: reference additional headers your program requires here

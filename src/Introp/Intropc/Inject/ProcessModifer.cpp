@@ -31,7 +31,7 @@ HANDLE ProcessModifer::OpenProcess_Ex(DWORD dwDesiredAccess, BOOL bInheritHandle
 }
 
 //进行区域写入数据
-bool ProcessModifer::WriteProcessMemory_Ex(HANDLE hProcess, LPVOID lpBaseAddress, LPVOID lpBuffer, DWORD nSize, LPDWORD lpNumberOfBytesWritten)
+bool ProcessModifer::WriteProcessMemory_Ex(HANDLE hProcess, LPVOID lpBaseAddress, LPVOID lpBuffer, DWORD nSize, SIZE_T* lpNumberOfBytesWritten)
 {
 	return ::WriteProcessMemory(hProcess, lpBaseAddress, lpBuffer, nSize, lpNumberOfBytesWritten);
 }

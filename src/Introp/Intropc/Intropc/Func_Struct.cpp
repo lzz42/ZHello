@@ -1,6 +1,15 @@
 #include "stdafx.h"
 #include "Func_Struct.h"
 
+typedef struct IntroStruct
+{
+	const char* charsA;
+	const char* charsB;
+	int C;
+	bool A;
+	bool B;
+	char D;
+};
 
 #pragma region 结构体相关
 

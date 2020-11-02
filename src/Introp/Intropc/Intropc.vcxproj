@@ -152,28 +152,29 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Func_Class.cpp" />
-    <ClCompile Include="Experiment.cpp" />
-    <ClCompile Include="Func_Simple.cpp" />
-    <ClCompile Include="Inject\InjectDemo.cpp" />
-    <ClCompile Include="Inject\main.cpp" />
+    <ClCompile Include="Intropc\Func_Class.cpp" />
+    <ClCompile Include="MemoryAlignment.cpp" />
+    <ClCompile Include="ParamTest.cpp" />
+    <ClCompile Include="PointerTest.cpp" />
+    <ClCompile Include="Intropc\Func_Simple.cpp" />
+    <ClCompile Include="program.cpp" />
     <ClCompile Include="stdafx.cpp" />
-    <ClCompile Include="Func_Struct.cpp" />
+    <ClCompile Include="Intropc\Func_Struct.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Inject\ReadMe.txt" />
-    <Text Include="NativeDll\ReadMe.txt" />
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Source.def" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Func_Class.h" />
-    <ClInclude Include="Func_Simple.h" />
-    <ClInclude Include="Inject\main.h" />
+    <ClInclude Include="Intropc\Func_Class.h" />
+    <ClInclude Include="Intropc\Func_Simple.h" />
+    <ClInclude Include="MemoryAlignment.h" />
+    <ClInclude Include="ParamTest.h" />
+    <ClInclude Include="PointerTest.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="Func_Struct.h" />
+    <ClInclude Include="Intropc\Func_Struct.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
