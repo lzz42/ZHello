@@ -70,7 +70,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\HelloWorld\ZHello.csproj">
       <Project>{df475759-2c65-48ac-8b94-712a3525042f}</Project>
-      <Name>HelloWorld</Name>
+      <Name>ZHello</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

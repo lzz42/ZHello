@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace UnitTestProject
+namespace Intropc.Test
 {
     public class CallCplusCplus
     {

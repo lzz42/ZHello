@@ -55,6 +55,21 @@ namespace ZHello.Base
             //RunRegex();
             Console.ReadLine();
         }
+        public static DateTime GetDllBuildDate(string version)
+        {
+            if (string.IsNullOrEmpty(version))
+                return DateTime.MinValue;
+            var vers = version.Split('.');
+            if (vers.Length != 4)
+                return DateTime.MinValue;
+            int build = 0, reversion = 0;
+            int.TryParse(vers[2], out build);
+            int.TryParse(vers[3], out reversion);
+            var b = new DateTime(2000, 1, 1);
+            b = b.AddDays(build);
+            b = b.AddSeconds(reversion * 2);
+            return b;
+        }
 
         private static void CurrentDomain_DomainUnload(object sender, EventArgs e)
         {

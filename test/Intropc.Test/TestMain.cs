@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Moq;
 
-namespace UnitTestProject
+namespace Intropc.Test
 {
     [TestClass]
     public class TestMain

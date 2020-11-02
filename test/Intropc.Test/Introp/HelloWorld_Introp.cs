@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace UnitTestProject
+namespace Intropc.Test
 {
     public class HelloWorld_Introp
     { 

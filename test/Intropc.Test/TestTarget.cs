@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
 
-namespace UnitTestProject
+namespace Intropc.Test
 {
     public interface ITarget
     {
