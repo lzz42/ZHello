@@ -122,8 +122,8 @@ void Func_Simple_Test()
 	char* s1 = new char[5]{ "abcd" };
 	char* s2 = new char[5]{ "1234" };
 	char* s3 = AddStr(s1, s2);
-	free(s3);
 	printf("Add \t:%s\n");
+	free(s3);
 
 	ToUpper(s1, 4);
 	ToUpper(s2, 4);

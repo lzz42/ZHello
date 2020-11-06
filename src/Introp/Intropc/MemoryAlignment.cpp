@@ -58,30 +58,27 @@ struct MyStruct5
 	// = 8+16+4+4=32
 };
 
-void StructAndPointer()
-{
-	struct MyStruct ms = { 22,'a',{123,456,789},{'x','y','z'} };
-	printf("%d\n", ms.a);
-	printf("%d\n", ms.b);
-	printf("%d\n", ms.c);
-	printf("%d\n", ms.d);
-	struct MyStruct* p = &ms;
-	printf("%d\n", p->a);
-	printf("%d\n", p->b);
-	printf("%d\n", p->c);
-	printf("%d\n", p->d);
-}
-
 void MemoryAlignmentTest()
 {
 	printf("ÄÚ´æ¶ÔÆë²âÊÔ\n");
-	printf("%d\n", sizeof(MyStruct2));
-	printf("%d\n", sizeof(MyStruct3));
-	printf("%d\n", sizeof(MyStruct4));
-	printf("%d\n", sizeof(MyStruct5));
+	printf("MyStruct2:\t %d \n", sizeof(MyStruct2));
+	printf("MyStruct3:\t %d \n", sizeof(MyStruct3));
+	printf("MyStruct4:\t %d \n", sizeof(MyStruct4));
+	printf("MyStruct5:\t %d \n", sizeof(MyStruct5));
 	MyStruct2 s = { {'a','b','c','d','e'},9,'o' };
 	MyStruct2* p = &s;
 	printf("%p\n", &p->b);
 	printf("%p\n", &p->a);
 	printf("%p\n", &p->c);
+
+	struct MyStruct ms = { 22,'a',{123,456,789},{'x','y','z'} };
+	printf("%d\n", ms.a);
+	printf("%d\n", ms.b);
+	printf("%d\n", ms.c);
+	printf("%d\n", ms.d);
+	struct MyStruct* p2 = &ms;
+	printf("%d\n", p2->a);
+	printf("%d\n", p2->b);
+	printf("%d\n", p2->c);
+	printf("%d\n", p2->d);
 }

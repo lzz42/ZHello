@@ -11,7 +11,7 @@ int main(int argc, char* argv) {
 	//PointerTest();
 	MemoryAlignmentTest();
 
-
+	Func_Simple_Test();
 
 	return 0;
 }

@@ -9,7 +9,6 @@ namespace ZHello
     /// </summary>
     public class InvokeHelper
     {
-        #region delegates
 
         private delegate object MethodInvoker(Control control, string methodName, params object[] args);
 
@@ -17,9 +16,6 @@ namespace ZHello
 
         private delegate void PropertySetInvoker(Control control, object noncontrol, string propertyName, object value);
 
-        #endregion delegates
-
-        #region static methods
 
         // helpers
         private static PropertyInfo GetPropertyInfo(Control control, object noncontrol, string propertyName)
@@ -159,7 +155,5 @@ namespace ZHello
             else
                 throw new ArgumentNullException("Invalid argument.");
         }
-
-        #endregion static methods
     }
 }

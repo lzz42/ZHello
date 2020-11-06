@@ -30,7 +30,7 @@ namespace ZHello.Algorithm.Lib
             {
                 throw ex;
             }
-            byte b = Encoding.ASCII.GetBytes(c.ToString())[0];
+            byte b = Encoding.UTF8.GetBytes(c.ToString())[0];
             return b;
         }
 
@@ -55,7 +55,11 @@ namespace ZHello.Algorithm.Lib
         }
 
         /*JSHash*/
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
         public static long JSHash(string str)
         {
             long hash = 1315423911;
@@ -65,7 +69,11 @@ namespace ZHello.Algorithm.Lib
         }
 
         /*PJWHash*/
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
         public static long PJWHash(string str)
         {
             int BitsInUnsignedInt = (int)(4 * 8);
@@ -84,7 +92,11 @@ namespace ZHello.Algorithm.Lib
         }
 
         /*ELFHash*/
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
         public static long ELFHash(string str)
         {
             long hash = 0;
@@ -100,7 +112,11 @@ namespace ZHello.Algorithm.Lib
         }
 
         /*BKDRHash*/
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
         public static long BKDRHash(string str)
         {
             long seed = 131;//31131131313131131313etc..
@@ -111,7 +127,11 @@ namespace ZHello.Algorithm.Lib
         }
 
         /*SDBMHash*/
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
         public static long SDBMHash(string str)
         {
             long hash = 0;
@@ -121,7 +141,11 @@ namespace ZHello.Algorithm.Lib
         }
 
         /*DJBHash*/
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
         public static long DJBHash(string str)
         {
             long hash = 5381;
@@ -131,7 +155,11 @@ namespace ZHello.Algorithm.Lib
         }
 
         /*DEKHash*/
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
         public static long DEKHash(string str)
         {
             long hash = str.Length;
@@ -141,7 +169,11 @@ namespace ZHello.Algorithm.Lib
         }
 
         /*BPHash*/
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
         public static long BPHash(string str)
         {
             long hash = 0;
@@ -151,7 +183,11 @@ namespace ZHello.Algorithm.Lib
         }
 
         /*FNVHash*/
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
         public static long FNVHash(string str)
         {
             long fnv_prime = 0x811C9DC5;
@@ -165,7 +201,11 @@ namespace ZHello.Algorithm.Lib
         }
 
         /*APHash*/
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
         public static long APHash(string str)
         {
             long hash = 0xAAAAAAAA;
