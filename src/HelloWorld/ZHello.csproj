@@ -221,6 +221,7 @@
     <Compile Include="MEF\CalImpl.cs" />
     <Compile Include="MEF\ICal.cs" />
     <Compile Include="MEF\MEFClient.cs" />
+    <Compile Include="OS\UseFont.cs" />
     <Compile Include="Other\PipelineStyleProgram.cs" />
     <Compile Include="HelloWorld.cs" />
     <Compile Include="Algorithm\Sort_Algorithm.cs" />

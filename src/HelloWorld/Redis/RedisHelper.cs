@@ -119,7 +119,6 @@ namespace RedisHelper
             }
             var con = RedisHelper.GetConnection();
             var db = RedisHelper.GetDatabase();
-            db.GeoAdd()
             var key = "kkkk";
             RedisHelper.Set(db, key, "11111");
             string s;

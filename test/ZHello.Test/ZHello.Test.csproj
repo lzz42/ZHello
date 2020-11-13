@@ -65,6 +65,7 @@
     <Compile Include="Common\DbgHelper_Test.cs" />
     <Compile Include="Hook\HookerTest.cs" />
     <Compile Include="MQ\ZeroMqTest.cs" />
+    <Compile Include="OS\UseFont_Test.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -75,6 +76,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="OS\娃娃体W5-GB.ttc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
