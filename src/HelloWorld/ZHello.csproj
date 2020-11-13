@@ -182,7 +182,6 @@
     <Compile Include="Base\TypeConverter_Test.cs" />
     <Compile Include="Cecil\MonoCecilPractices.cs" />
     <Compile Include="CLR\AppDomainHelper.cs" />
-    <Compile Include="CLR\GrammerParser.cs" />
     <Compile Include="Common\DbgHelper.cs" />
     <Compile Include="Algorithm\Lib\HashLib.cs" />
     <Compile Include="Algorithm\Lib\MD5Lib.cs" />
@@ -257,9 +256,6 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Key\HelloWorld_psw_123456.pfx" />
-    <None Include="Key\HelloWorld_TemporaryKey.pfx" />
-    <None Include="Key\MyPorfile.PublicKey" />
-    <None Include="Key\MyPorfile.snk" />
     <None Include="MQ\ZeroMQ\ZeroMQ使用.md" />
     <None Include="packages.config" />
     <None Include="Properties\app.manifest" />

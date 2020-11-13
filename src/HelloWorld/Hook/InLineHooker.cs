@@ -93,10 +93,9 @@ namespace ZHello.Hook
         /// <param name="originalMethod"></param>
         public void HookMethod(MethodBase rawMethod, MethodBase hookMethod, MethodBase originalMethod)
         {
-            //确保jit过了
             JIT(rawMethod);
             JIT(hookMethod);
-            JIT(originalMethod);
+            //JIT(originalMethod);
             var rawMethodPtr = (byte*)rawMethod.MethodHandle.GetFunctionPointer().ToPointer();
             var hookMethodPtr = (byte*)hookMethod.MethodHandle.GetFunctionPointer().ToPointer();
             //生成跳转指令，使用相对地址，用于跳转到用户定义函数
