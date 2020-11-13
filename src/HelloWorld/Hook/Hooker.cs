@@ -28,6 +28,4 @@ namespace ZHello.Hook
             }
         }
     }
-
-
 }

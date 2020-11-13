@@ -4,18 +4,35 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ZHello.Hook
 {
+    public enum Protection
+    {
+        PAGE_NOACCESS = 0x01,
+        PAGE_READONLY = 0x02,
+        PAGE_READWRITE = 0x04,
+        PAGE_WRITECOPY = 0x08,
+        PAGE_EXECUTE = 0x10,
+        PAGE_EXECUTE_READ = 0x20,
+        PAGE_EXECUTE_READWRITE = 0x40,
+        PAGE_EXECUTE_WRITECOPY = 0x80,
+        PAGE_GUARD = 0x100,
+        PAGE_NOCACHE = 0x200,
+        PAGE_WRITECOMBINE = 0x400
+    }
+
     /// <summary>
-    /// 
+    /// 内联钩子
     /// https://bbs.csdn.net/topics/391958344
     /// </summary>
     public unsafe class InLineHooker
     {
-        byte[] jmp_inst =
+        public Dictionary<MethodBase, byte[]> Method = new Dictionary<MethodBase, byte[]>();
+
+        protected byte[] newInstrs = { 0xE9, 0x90, 0x90, 0x90, 0x90 };
+
+        private byte[] jmp_inst =
         {
             0x50,                                              //push rax
             0x48,0xB8,0x90,0x90,0x90,0x90,0x90,0x90,0x90,0x90, //mov rax,target_addr
@@ -24,19 +41,29 @@ namespace ZHello.Hook
             0xC2,0x08,0x00                                     //ret 8
         };
 
-        protected byte[] newInstrs = { 0xE9, 0x90, 0x90, 0x90, 0x90 }; //jmp target
+        /// <summary>
+        /// 确保函数在JIT机制内，被编译为本地代码
+        /// </summary>
+        /// <param name="method"></param>
+        public static void JIT(MethodBase method)
+        {
+            var typeHandles = method.DeclaringType.GetGenericArguments().Select(t => t.TypeHandle).ToArray();
+            RuntimeHelpers.PrepareMethod(method.MethodHandle, typeHandles);
+        }
 
-        public Dictionary<MethodBase, byte[]> Method = new Dictionary<MethodBase, byte[]>();
-
+        //jmp target
+        /// <summary>
+        /// 采用jmp指令从原函数跳转到目标函数
+        /// </summary>
+        /// <param name="lMethod">原函数</param>
+        /// <param name="rMethod">目标函数</param>
         public void ReplaceMethod(MethodBase lMethod, MethodBase rMethod)
         {
-            //确保jit过了
-            var typeHandles = lMethod.DeclaringType.GetGenericArguments().Select(t => t.TypeHandle).ToArray();
-            RuntimeHelpers.PrepareMethod(lMethod.MethodHandle, typeHandles);
-            typeHandles = rMethod.DeclaringType.GetGenericArguments().Select(t => t.TypeHandle).ToArray();
-            RuntimeHelpers.PrepareMethod(rMethod.MethodHandle, typeHandles);
-
+            //确保方法已被编译为本地代码
+            JIT(lMethod);
+            JIT(rMethod);
             uint oldProtect;
+            //获取函数指针
             var rawMPtr = (byte*)rMethod.MethodHandle.GetFunctionPointer().ToPointer();
             var needSize = LDasm.SizeofMin5Byte(rawMPtr);
             var total_length = (int)needSize + 5;
@@ -53,16 +80,23 @@ namespace ZHello.Hook
                 *((uint*)p) = (uint)rawMPtr - (uint)ptr - 5;
             }
             Marshal.Copy(code, 0, ptr, total_length);
-            NativeAPI.VirtualProtect(ptr, (uint)total_length, Protection.PAGE_EXECUTE_READWRITE, out oldProtect);
+            VirtualProtect(ptr, (uint)total_length, Protection.PAGE_EXECUTE_READWRITE, out oldProtect);
             //RuntimeHelpers.PrepareMethod(lMethod.MethodHandle);
             *((uint*)lMethod.MethodHandle.Value.ToPointer() + 2) = (uint)ptr;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="rawMethod"></param>
+        /// <param name="hookMethod"></param>
+        /// <param name="originalMethod"></param>
         public void HookMethod(MethodBase rawMethod, MethodBase hookMethod, MethodBase originalMethod)
         {
             //确保jit过了
-            var typeHandles = rawMethod.DeclaringType.GetGenericArguments().Select(t => t.TypeHandle).ToArray();
-            RuntimeHelpers.PrepareMethod(rawMethod.MethodHandle, typeHandles);
+            JIT(rawMethod);
+            JIT(hookMethod);
+            JIT(originalMethod);
             var rawMethodPtr = (byte*)rawMethod.MethodHandle.GetFunctionPointer().ToPointer();
             var hookMethodPtr = (byte*)hookMethod.MethodHandle.GetFunctionPointer().ToPointer();
             //生成跳转指令，使用相对地址，用于跳转到用户定义函数
@@ -85,7 +119,7 @@ namespace ZHello.Hook
             //并且将对原函数的调用指向跳转指令，以此实现将对原始目标函数的调用跳转到用户定义函数执行的目的
             uint oldProtect;
             //系统方法没有写权限，需要修改页属性
-            NativeAPI.VirtualProtect((IntPtr)rawMethodPtr, 5, Protection.PAGE_EXECUTE_READWRITE, out oldProtect);
+            VirtualProtect((IntPtr)rawMethodPtr, 5, Protection.PAGE_EXECUTE_READWRITE, out oldProtect);
             for (int i = 0; i < newInstrs.Length; i++)
             {
                 *(rawMethodPtr + i) = newInstrs[i];
@@ -96,7 +130,7 @@ namespace ZHello.Hook
         /// 将对originalMethod的调用指向原函数
         /// </summary>
         /// <param name="originalMethod"></param>
-        protected void MakePlacholderMethodCallPointsToRawMethod_x86(MethodBase originalMethod,IntPtr pMethod)
+        protected void MakePlacholderMethodCallPointsToRawMethod_x86(MethodBase originalMethod, IntPtr pMethod)
         {
             uint oldProtect;
             var rawMPtr = (byte*)pMethod.ToPointer();
@@ -115,7 +149,7 @@ namespace ZHello.Hook
                 *((uint*)p) = (uint)rawMPtr - (uint)ptr - 5;
             }
             Marshal.Copy(code, 0, ptr, total_length);
-            NativeAPI.VirtualProtect(ptr, (uint)total_length, Protection.PAGE_EXECUTE_READWRITE, out oldProtect);
+            VirtualProtect(ptr, (uint)total_length, Protection.PAGE_EXECUTE_READWRITE, out oldProtect);
             RuntimeHelpers.PrepareMethod(originalMethod.MethodHandle);
             *((uint*)originalMethod.MethodHandle.Value.ToPointer() + 2) = (uint)ptr;
         }
@@ -138,31 +172,13 @@ namespace ZHello.Hook
             IntPtr ptr = Marshal.AllocHGlobal(totalLength);
             Marshal.Copy(src_instr, 0, ptr, src_instr.Length);
             Marshal.Copy(jmp_inst, 0, ptr + src_instr.Length, jmp_inst.Length);
-            NativeAPI.VirtualProtect(ptr, (uint)totalLength, Protection.PAGE_EXECUTE_READWRITE, out oldProtect);
+            VirtualProtect(ptr, (uint)totalLength, Protection.PAGE_EXECUTE_READWRITE, out oldProtect);
             RuntimeHelpers.PrepareMethod(method.MethodHandle);
             *((ulong*)((uint*)method.MethodHandle.Value.ToPointer() + 2)) = (ulong)ptr;
         }
-    }
 
-    public enum Protection
-    {
-        PAGE_NOACCESS = 0x01,
-        PAGE_READONLY = 0x02,
-        PAGE_READWRITE = 0x04,
-        PAGE_WRITECOPY = 0x08,
-        PAGE_EXECUTE = 0x10,
-        PAGE_EXECUTE_READ = 0x20,
-        PAGE_EXECUTE_READWRITE = 0x40,
-        PAGE_EXECUTE_WRITECOPY = 0x80,
-        PAGE_GUARD = 0x100,
-        PAGE_NOCACHE = 0x200,
-        PAGE_WRITECOMBINE = 0x400
-    }
-
-    public class NativeAPI
-    {
         [DllImport("kernel32")]
-        public static extern bool VirtualProtect(IntPtr lpAddress, uint dwSize, Protection flNewProtect, out uint lpflOldProtect);
+        private static extern bool VirtualProtect(IntPtr lpAddress, uint dwSize, Protection flNewProtect, out uint lpflOldProtect);
     }
 
     /// <summary>
@@ -170,42 +186,28 @@ namespace ZHello.Hook
     /// </summary>
     public unsafe class LDasm
     {
-        const int F_INVALID = 0x01;
-        const int F_PREFIX = 0x02;
-        const int F_REX = 0x04;
-        const int F_MODRM = 0x08;
-        const int F_SIB = 0x10;
-        const int F_DISP = 0x20;
-        const int F_IMM = 0x40;
-        const int F_RELATIVE = 0x80;
+        private const int F_INVALID = 0x01;
+        private const int F_PREFIX = 0x02;
+        private const int F_REX = 0x04;
+        private const int F_MODRM = 0x08;
+        private const int F_SIB = 0x10;
+        private const int F_DISP = 0x20;
+        private const int F_IMM = 0x40;
+        private const int F_RELATIVE = 0x80;
 
-        const int OP_NONE = 0x00;
-        const int OP_INVALID = 0x80;
+        private const int OP_NONE = 0x00;
+        private const int OP_INVALID = 0x80;
 
-        const int OP_DATA_I8 = 0x01;
-        const int OP_DATA_I16 = 0x02;
-        const int OP_DATA_I16_I32 = 0x04;
-        const int OP_DATA_I16_I32_I64 = 0x08;
-        const int OP_EXTENDED = 0x10;
-        const int OP_RELATIVE = 0x20;
-        const int OP_MODRM = 0x40;
-        const int OP_PREFIX = 0x80;
+        private const int OP_DATA_I8 = 0x01;
+        private const int OP_DATA_I16 = 0x02;
+        private const int OP_DATA_I16_I32 = 0x04;
+        private const int OP_DATA_I16_I32_I64 = 0x08;
+        private const int OP_EXTENDED = 0x10;
+        private const int OP_RELATIVE = 0x20;
+        private const int OP_MODRM = 0x40;
+        private const int OP_PREFIX = 0x80;
 
-        struct ldasm_data
-        {
-            public byte flags;
-            public byte rex;
-            public byte modrm;
-            public byte sib;
-            public byte opcd_offset;
-            public byte opcd_size;
-            public byte disp_offset;
-            public byte disp_size;
-            public byte imm_offset;
-            public byte imm_size;
-        }
-
-        static byte[] flags_table =
+        private static byte[] flags_table =
         {
             /* 00 */    OP_MODRM,
             /* 01 */    OP_MODRM,
@@ -223,7 +225,7 @@ namespace ZHello.Hook
             /* 0D */    OP_DATA_I16_I32,
             /* 0E */    OP_NONE,
             /* 0F */    OP_NONE,
-    
+
             /* 10 */    OP_MODRM,
             /* 11 */    OP_MODRM,
             /* 12 */    OP_MODRM,
@@ -240,7 +242,7 @@ namespace ZHello.Hook
             /* 1D */    OP_DATA_I16_I32,
             /* 1E */    OP_NONE,
             /* 1F */    OP_NONE,
-    
+
             /* 20 */    OP_MODRM,
             /* 21 */    OP_MODRM,
             /* 22 */    OP_MODRM,
@@ -257,7 +259,7 @@ namespace ZHello.Hook
             /* 2D */    OP_DATA_I16_I32,
             /* 2E */    OP_PREFIX,
             /* 2F */    OP_NONE,
-    
+
             /* 30 */    OP_MODRM,
             /* 31 */    OP_MODRM,
             /* 32 */    OP_MODRM,
@@ -274,7 +276,7 @@ namespace ZHello.Hook
             /* 3D */    OP_DATA_I16_I32,
             /* 3E */    OP_PREFIX,
             /* 3F */    OP_NONE,
-    
+
             /* 40 */    OP_NONE,
             /* 41 */    OP_NONE,
             /* 42 */    OP_NONE,
@@ -291,7 +293,7 @@ namespace ZHello.Hook
             /* 4D */    OP_NONE,
             /* 4E */    OP_NONE,
             /* 4F */    OP_NONE,
-    
+
             /* 50 */    OP_NONE,
             /* 51 */    OP_NONE,
             /* 52 */    OP_NONE,
@@ -309,7 +311,7 @@ namespace ZHello.Hook
             /* 5E */    OP_NONE,
             /* 5F */    OP_NONE,
             /* 60 */    OP_NONE,
-    
+
             /* 61 */    OP_NONE,
             /* 62 */    OP_MODRM,
             /* 63 */    OP_MODRM,
@@ -325,7 +327,7 @@ namespace ZHello.Hook
             /* 6D */    OP_NONE,
             /* 6E */    OP_NONE,
             /* 6F */    OP_NONE,
-    
+
             /* 70 */    OP_RELATIVE | OP_DATA_I8,
             /* 71 */    OP_RELATIVE | OP_DATA_I8,
             /* 72 */    OP_RELATIVE | OP_DATA_I8,
@@ -342,7 +344,7 @@ namespace ZHello.Hook
             /* 7D */    OP_RELATIVE | OP_DATA_I8,
             /* 7E */    OP_RELATIVE | OP_DATA_I8,
             /* 7F */    OP_RELATIVE | OP_DATA_I8,
-    
+
             /* 80 */    OP_MODRM | OP_DATA_I8,
             /* 81 */    OP_MODRM | OP_DATA_I16_I32,
             /* 82 */    OP_MODRM | OP_DATA_I8,
@@ -359,7 +361,7 @@ namespace ZHello.Hook
             /* 8D */    OP_MODRM,
             /* 8E */    OP_MODRM,
             /* 8F */    OP_MODRM,
-    
+
             /* 90 */    OP_NONE,
             /* 91 */    OP_NONE,
             /* 92 */    OP_NONE,
@@ -376,7 +378,7 @@ namespace ZHello.Hook
             /* 9D */    OP_NONE,
             /* 9E */    OP_NONE,
             /* 9F */    OP_NONE,
-    
+
             /* A0 */    OP_DATA_I8,
             /* A1 */    OP_DATA_I16_I32_I64,
             /* A2 */    OP_DATA_I8,
@@ -393,7 +395,7 @@ namespace ZHello.Hook
             /* AD */    OP_NONE,
             /* AE */    OP_NONE,
             /* AF */    OP_NONE,
-    
+
             /* B0 */    OP_DATA_I8,
             /* B1 */    OP_DATA_I8,
             /* B2 */    OP_DATA_I8,
@@ -410,7 +412,7 @@ namespace ZHello.Hook
             /* BD */    OP_DATA_I16_I32_I64,
             /* BE */    OP_DATA_I16_I32_I64,
             /* BF */    OP_DATA_I16_I32_I64,
-    
+
             /* C0 */    OP_MODRM | OP_DATA_I8,
             /* C1 */    OP_MODRM | OP_DATA_I8,
             /* C2 */    OP_DATA_I16,
@@ -427,7 +429,7 @@ namespace ZHello.Hook
             /* CD */    OP_DATA_I8,
             /* CE */    OP_NONE,
             /* CF */    OP_NONE,
-    
+
             /* D0 */    OP_MODRM,
             /* D1 */    OP_MODRM,
             /* D2 */    OP_MODRM,
@@ -444,7 +446,7 @@ namespace ZHello.Hook
             /* DD */    OP_MODRM,
             /* DE */    OP_MODRM,
             /* DF */    OP_MODRM,
-    
+
             /* E0 */    OP_RELATIVE | OP_DATA_I8,
             /* E1 */    OP_RELATIVE | OP_DATA_I8,
             /* E2 */    OP_RELATIVE | OP_DATA_I8,
@@ -461,7 +463,7 @@ namespace ZHello.Hook
             /* ED */    OP_NONE,
             /* EE */    OP_NONE,
             /* EF */    OP_NONE,
-    
+
             /* F0 */    OP_PREFIX,
             /* F1 */    OP_NONE,
             /* F2 */    OP_PREFIX,
@@ -480,7 +482,7 @@ namespace ZHello.Hook
             /* FF */    OP_MODRM
         };
 
-        static byte[] flags_table_ex =
+        private static byte[] flags_table_ex =
         {
             /* 0F00 */    OP_MODRM,
             /* 0F01 */    OP_MODRM,
@@ -498,7 +500,7 @@ namespace ZHello.Hook
             /* 0F0D */    OP_MODRM,
             /* 0F0E */    OP_INVALID,
             /* 0F0F */    OP_MODRM | OP_DATA_I8,        //3Dnow
-    
+
             /* 0F10 */    OP_MODRM,
             /* 0F11 */    OP_MODRM,
             /* 0F12 */    OP_MODRM,
@@ -515,7 +517,7 @@ namespace ZHello.Hook
             /* 0F1D */    OP_INVALID,
             /* 0F1E */    OP_INVALID,
             /* 0F1F */    OP_NONE,
-    
+
             /* 0F20 */    OP_MODRM,
             /* 0F21 */    OP_MODRM,
             /* 0F22 */    OP_MODRM,
@@ -532,7 +534,7 @@ namespace ZHello.Hook
             /* 0F2D */    OP_MODRM,
             /* 0F2E */    OP_MODRM,
             /* 0F2F */    OP_MODRM,
-    
+
             /* 0F30 */    OP_NONE,
             /* 0F31 */    OP_NONE,
             /* 0F32 */    OP_NONE,
@@ -541,7 +543,7 @@ namespace ZHello.Hook
             /* 0F35 */    OP_NONE,
             /* 0F36 */    OP_INVALID,
             /* 0F37 */    OP_NONE,
-            /* 0F38 */    OP_MODRM | OP_EXTENDED, 
+            /* 0F38 */    OP_MODRM | OP_EXTENDED,
             /* 0F39 */    OP_INVALID,
             /* 0F3A */    OP_MODRM | OP_EXTENDED | OP_DATA_I8,
             /* 0F3B */    OP_INVALID,
@@ -549,7 +551,7 @@ namespace ZHello.Hook
             /* 0F3D */    OP_INVALID,
             /* 0F3E */    OP_INVALID,
             /* 0F3F */    OP_INVALID,
-    
+
             /* 0F40 */    OP_MODRM,
             /* 0F41 */    OP_MODRM,
             /* 0F42 */    OP_MODRM,
@@ -566,7 +568,7 @@ namespace ZHello.Hook
             /* 0F4D */    OP_MODRM,
             /* 0F4E */    OP_MODRM,
             /* 0F4F */    OP_MODRM,
-    
+
             /* 0F50 */    OP_MODRM,
             /* 0F51 */    OP_MODRM,
             /* 0F52 */    OP_MODRM,
@@ -583,7 +585,7 @@ namespace ZHello.Hook
             /* 0F5D */    OP_MODRM,
             /* 0F5E */    OP_MODRM,
             /* 0F5F */    OP_MODRM,
-    
+
             /* 0F60 */    OP_MODRM,
             /* 0F61 */    OP_MODRM,
             /* 0F62 */    OP_MODRM,
@@ -600,7 +602,7 @@ namespace ZHello.Hook
             /* 0F6D */    OP_MODRM,
             /* 0F6E */    OP_MODRM,
             /* 0F6F */    OP_MODRM,
-    
+
             /* 0F70 */    OP_MODRM | OP_DATA_I8,
             /* 0F71 */    OP_MODRM | OP_DATA_I8,
             /* 0F72 */    OP_MODRM | OP_DATA_I8,
@@ -617,7 +619,7 @@ namespace ZHello.Hook
             /* 0F7D */    OP_MODRM,
             /* 0F7E */    OP_MODRM,
             /* 0F7F */    OP_MODRM,
-    
+
             /* 0F80 */    OP_RELATIVE | OP_DATA_I16_I32,
             /* 0F81 */    OP_RELATIVE | OP_DATA_I16_I32,
             /* 0F82 */    OP_RELATIVE | OP_DATA_I16_I32,
@@ -634,7 +636,7 @@ namespace ZHello.Hook
             /* 0F8D */    OP_RELATIVE | OP_DATA_I16_I32,
             /* 0F8E */    OP_RELATIVE | OP_DATA_I16_I32,
             /* 0F8F */    OP_RELATIVE | OP_DATA_I16_I32,
-    
+
             /* 0F90 */    OP_MODRM,
             /* 0F91 */    OP_MODRM,
             /* 0F92 */    OP_MODRM,
@@ -651,7 +653,7 @@ namespace ZHello.Hook
             /* 0F9D */    OP_MODRM,
             /* 0F9E */    OP_MODRM,
             /* 0F9F */    OP_MODRM,
-    
+
             /* 0FA0 */    OP_NONE,
             /* 0FA1 */    OP_NONE,
             /* 0FA2 */    OP_NONE,
@@ -668,7 +670,7 @@ namespace ZHello.Hook
             /* 0FAD */    OP_MODRM,
             /* 0FAE */    OP_MODRM,
             /* 0FAF */    OP_MODRM,
-    
+
             /* 0FB0 */    OP_MODRM,
             /* 0FB1 */    OP_MODRM,
             /* 0FB2 */    OP_MODRM,
@@ -685,7 +687,7 @@ namespace ZHello.Hook
             /* 0FBD */    OP_MODRM,
             /* 0FBE */    OP_MODRM,
             /* 0FBF */    OP_MODRM,
-    
+
             /* 0FC0 */    OP_MODRM,
             /* 0FC1 */    OP_MODRM,
             /* 0FC2 */    OP_MODRM | OP_DATA_I8,
@@ -702,7 +704,7 @@ namespace ZHello.Hook
             /* 0FCD */    OP_NONE,
             /* 0FCE */    OP_NONE,
             /* 0FCF */    OP_NONE,
-    
+
             /* 0FD0 */    OP_MODRM,
             /* 0FD1 */    OP_MODRM,
             /* 0FD2 */    OP_MODRM,
@@ -719,7 +721,7 @@ namespace ZHello.Hook
             /* 0FDD */    OP_MODRM,
             /* 0FDE */    OP_MODRM,
             /* 0FDF */    OP_MODRM,
-    
+
             /* 0FE0 */    OP_MODRM,
             /* 0FE1 */    OP_MODRM,
             /* 0FE2 */    OP_MODRM,
@@ -736,7 +738,7 @@ namespace ZHello.Hook
             /* 0FED */    OP_MODRM,
             /* 0FEE */    OP_MODRM,
             /* 0FEF */    OP_MODRM,
-    
+
             /* 0FF0 */    OP_MODRM,
             /* 0FF1 */    OP_MODRM,
             /* 0FF2 */    OP_MODRM,
@@ -754,16 +756,6 @@ namespace ZHello.Hook
             /* 0FFE */    OP_MODRM,
             /* 0FFF */    OP_INVALID,
         };
-
-        static byte cflags(byte op)
-        {
-            return flags_table[op];
-        }
-
-        static byte cflags_ex(byte op)
-        {
-            return flags_table_ex[op];
-        }
 
         /// <summary>
         /// 计算大于等于5字节的最少指令的长度
@@ -789,13 +781,22 @@ namespace ZHello.Hook
                     break;
 
                 code = (void*)((ulong)code + Length);
-
             } while (Length > 0);
 
             return Result;
         }
 
-        static uint ldasm(void* code, ldasm_data ld, bool is64)
+        private static byte cflags(byte op)
+        {
+            return flags_table[op];
+        }
+
+        private static byte cflags_ex(byte op)
+        {
+            return flags_table_ex[op];
+        }
+
+        private static uint ldasm(void* code, ldasm_data ld, bool is64)
         {
             byte* p = (byte*)code;
             byte s, op, f;
@@ -926,9 +927,11 @@ namespace ZHello.Hook
                                 ld.disp_size = 4;
                         }
                         break;
+
                     case 1:
                         ld.disp_size = 1;
                         break;
+
                     case 2:
                         if (is64)
                             ld.disp_size = 4;
@@ -971,6 +974,20 @@ namespace ZHello.Hook
                 ld.flags |= F_INVALID;
 
             return s;
+        }
+
+        private struct ldasm_data
+        {
+            public byte flags;
+            public byte rex;
+            public byte modrm;
+            public byte sib;
+            public byte opcd_offset;
+            public byte opcd_size;
+            public byte disp_offset;
+            public byte disp_size;
+            public byte imm_offset;
+            public byte imm_size;
         }
     }
 }

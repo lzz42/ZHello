@@ -62,6 +62,7 @@ namespace ZHello.Test.Hook
             var max = typeof(OrignClass).GetMethod("Max");
             var min = typeof(HookClass).GetMethod("Min");
 
+            //调用m1时将调用m2然后调用m3,m1函数体不会执行
             hooker.HookMethod(m1, m2, m3);
 
             var orig = new OrignClass();
@@ -75,6 +76,7 @@ namespace ZHello.Test.Hook
             int zz = orig.Max(10, 20, 30);
             int ww = hc.Min(10, 20, 30);
 
+            //将函数max 替换为函数min
             hooker.ReplaceMethod(max, min);
 
             zz = orig.Max(10, 20, 30);
