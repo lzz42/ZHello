@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-using System.Threading;
-using System.Threading.Tasks;
-
-/*  进程和线程
+﻿/*  进程和线程
  * 进程---执行中的代码，活动实体
  * 进程包括：
  *  文本段：代码段
@@ -67,7 +60,6 @@ using System.Threading.Tasks;
  *      进程终止
  *          级联终止
  *
- *
  *  进程间通信IPC
  *      两种基本模式：
  *      共享内存：速度快
@@ -99,12 +91,19 @@ using System.Threading.Tasks;
  *
  */
 
+using System;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.Threading;
+using System.Threading.Tasks;
 namespace ZHello.Async
 {
     public class WinProcess
     {
-        public static Dictionary<string, string> dic = new Dictionary<string, string>();
-
+        /// <summary>
+        /// async await 异步函数
+        /// </summary>
+        /// <returns></returns>
         public static async Task<string> GetString()
         {
             return await new Task<string>(s =>
@@ -119,11 +118,8 @@ namespace ZHello.Async
             Console.WriteLine(string.Format("Main :{0}", Environment.Is64BitProcess ? "x64" : "x86"));
             var procinfo = new ProcessStartInfo();
             procinfo.FileName = @"C:\Windows\System32\notepad.exe";
-            //procinfo.FileName = @"Crawler.exe";
-            //procinfo.FileName = @"C:\Program Files\Microsoft VS Code\Code.exe";
             procinfo.WorkingDirectory = @"";
             procinfo.Verb = "runas";
-
             var res = Process.Start(procinfo);
             bool r = false;
             if (IsWow64Process(res.Handle, out r))
@@ -134,34 +130,5 @@ namespace ZHello.Async
 
         [DllImport("Kernel32.dll", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Auto, EntryPoint = "IsWow64Process")]
         public static extern bool IsWow64Process(IntPtr handle, out bool result);
-
-        public static void PrintThreadInfo(string msg = null)
-        {
-            Console.WriteLine("{0},Current Thread is：{1}", msg, Thread.CurrentThread.ManagedThreadId);
-        }
-
-        public static void Work()
-        {
-            Console.WriteLine("working begin");
-            PrintThreadInfo("work");
-            Thread.Sleep(300);
-            Console.WriteLine("working done");
-        }
-
-        public static void Done()
-        {
-            PrintThreadInfo("has done");
-            Console.WriteLine("has done");
-        }
-
-        public void TestMethod()
-        {
-            PrintThreadInfo("main after");
-            var s = GetString();
-            s.Wait();
-            PrintThreadInfo("main before");
-            Console.WriteLine("res:{0}", s.Result);
-            Console.ReadLine();
-        }
     }
 }

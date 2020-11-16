@@ -12,7 +12,6 @@ namespace ZHello.Base
      *
      * 1.使用一个第三方dll的内部的非公开类和方法；
      *
-
          */
 
     public class SpecialFunctionInvoke

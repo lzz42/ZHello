@@ -7,7 +7,7 @@ using System.Threading;
 
 [assembly: CLSCompliant(true)]
 
-namespace ZHello.MemoryLayout
+namespace ZHello.Base
 {
     public class EmitProgram
     {

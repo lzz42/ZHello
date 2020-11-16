@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
 
-namespace ZHello
+namespace ZHello.Algorithm
 {
     //common language specification
     public static class CLS

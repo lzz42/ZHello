@@ -1,67 +1,28 @@
 ﻿using System;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 
 namespace ZHello.GDI
 {
-    internal class ImageConvert
+    /// <summary>
+    /// 图像转换
+    /// </summary>
+    public static class ImageConvert
     {
         /// <summary>
-        /// 获取颜色替换后的图片
-        /// 仅替换指定颜色，其他颜色不变
+        /// 缩放算法
         /// </summary>
-        /// <param name="img"></param>
-        /// <param name="lColor">要替换的目标颜色</param>
-        /// <param name="rColor">替换颜色</param>
-        /// <returns></returns>
-        private static Image GetColorReplaceImgage(Image img, Color lColor, Color rColor)
+        public enum ZoomType
         {
-            var map = new Bitmap(img);
-            Bitmap g = new Bitmap(map.Width, map.Height);
-            for (int i = 0; i < map.Width; i++)
-            {
-                for (int j = 0; j < map.Height; j++)
-                {
-                    Color c = map.GetPixel(i, j);
-                    if (c.A == lColor.A && c.R == lColor.R && c.G == lColor.G && c.B == lColor.B)
-                    {
-                        g.SetPixel(i, j, Color.FromArgb(c.A, rColor.R, rColor.G, rColor.B));
-                    }
-                }
-            }
-            return g;
-        }
+            /// <summary>
+            /// 邻近插值法
+            /// </summary>
+            NearestNeighborInterpolation,
 
-        /// <summary>
-        /// 获取颜色替换后的反色的图片
-        /// 1.将指定的原图片颜色替换为透明白色
-        /// 2.将其他颜色替换为指定颜色
-        /// </summary>
-        /// <param name="img"></param>
-        /// <param name="lColor">要替换的目标颜色</param>
-        /// <param name="rColor">替换颜色</param>
-        /// <returns></returns>
-        private static Image GetColorReplaceInvertedImage(Image img, Color lColor, Color rColor)
-        {
-            var map = new Bitmap(img);
-            Bitmap g = new Bitmap(map.Width, map.Height);
-            for (int i = 0; i < map.Width; i++)
-            {
-                for (int j = 0; j < map.Height; j++)
-                {
-                    Color c = map.GetPixel(i, j);
-                    if (c.A == lColor.A && c.R == lColor.R && c.G == lColor.G && c.B == lColor.B)
-                    {
-                        g.SetPixel(i, j, Color.FromArgb(c.A, Color.White.R, Color.White.G, Color.White.B));
-                    }
-                    else
-                    {
-                        g.SetPixel(i, j, rColor);
-                    }
-                }
-            }
-            return g;
+            /// <summary>
+            /// 双线性插值法
+            /// </summary>
+            BilinearInterpolation
         }
 
         /// <summary>
@@ -71,7 +32,7 @@ namespace ZHello.GDI
         /// <param name="degree">旋转角度</param>
         /// <param name="dstBmp">目标图像</param>
         /// <returns>处理成功 true 失败 false</returns>
-        public static bool Rotation(Bitmap srcBmp, double degree, out Bitmap dstBmp)
+        public static bool Rotation(this Bitmap srcBmp, double degree, out Bitmap dstBmp)
         {
             if (srcBmp == null)
             {
@@ -221,12 +182,6 @@ namespace ZHello.GDI
             return true;
         }
 
-        public enum ZoomType
-        {
-            NearestNeighborInterpolation,
-            BilinearInterpolation
-        }
-
         /// <summary>
         /// 图像缩放
         /// </summary>
@@ -236,8 +191,9 @@ namespace ZHello.GDI
         /// <param name="dstBmp">目标图像</param>
         /// <param name="GetNearOrBil">缩放选用的算法</param>
         /// <returns>处理成功 true 失败 false</returns>
-        public static bool Zoom(Bitmap srcBmp, double ratioW, double ratioH, out Bitmap dstBmp, ZoomType zoomType)
-        {//ZoomType为自定义的枚举类型
+        public static bool Zoom(this Bitmap srcBmp, double ratioW, double ratioH, out Bitmap dstBmp, ZoomType zoomType = ZoomType.NearestNeighborInterpolation)
+        {
+            //ZoomType为自定义的枚举类型
             if (srcBmp == null)
             {
                 dstBmp = null;
@@ -321,213 +277,13 @@ namespace ZHello.GDI
             return true;
         }
 
-        ///// <summary>
-        ///// 获取颜色替换后的图片
-        ///// 仅替换指定颜色，其他颜色不变
-        ///// </summary>
-        ///// <param name="img"></param>
-        ///// <param name="lColor">原图片颜色</param>
-        ///// <param name="rColor">新图片颜色</param>
-        ///// <returns></returns>
-        //internal static Image GetColorReplaceImgage(Image img, Color lColor, Color rColor)
-        //{
-        //    var map = new Bitmap(img);
-        //    Bitmap g = new Bitmap(map.Width, map.Height);
-        //    for (int i = 0; i < map.Width; i++)
-        //    {
-        //        for (int j = 0; j < map.Height; j++)
-        //        {
-        //            Color c = map.GetPixel(i, j);
-        //            if (c.A == lColor.A && c.R == lColor.R && c.G == lColor.G && c.B == lColor.B)
-        //            {
-        //                g.SetPixel(i, j, Color.FromArgb(c.A, rColor.R, rColor.G, rColor.B));
-        //            }
-        //        }
-        //    }
-        //    return g;
-        //}
-
-        ///// <summary>
-        ///// 获取颜色替换后的反色的图片
-        ///// 1.将指定的原图片颜色替换为透明白色
-        ///// 2.将其他颜色替换为指定颜色
-        ///// </summary>
-        ///// <param name="img">指定的原图片</param>
-        ///// <param name="lColor">原图片颜色</param>
-        ///// <param name="rColor">新图片颜色</param>
-        ///// <returns></returns>
-        //internal static Image GetColorReplaceInvertedImage(Image img, Color lColor, Color rColor)
-        //{
-        //    var map = new Bitmap(img);
-        //    Bitmap g = new Bitmap(map.Width, map.Height);
-        //    for (int i = 0; i < map.Width; i++)
-        //    {
-        //        for (int j = 0; j < map.Height; j++)
-        //        {
-        //            Color c = map.GetPixel(i, j);
-        //            if (c.A == lColor.A && c.R == lColor.R && c.G == lColor.G && c.B == lColor.B)
-        //            {
-        //                g.SetPixel(i, j, Color.FromArgb(c.A, Color.White.R, Color.White.G, Color.White.B));
-        //            }
-        //            else
-        //            {
-        //                g.SetPixel(i, j, rColor);
-        //            }
-        //        }
-        //    }
-        //    return g;
-        //}
-
-        ///// <summary>
-        ///// 图像旋转
-        ///// </summary>
-        ///// <param name="srcBmp">原始图像</param>
-        ///// <param name="degree">旋转角度逆时针</param>
-        ///// <param name="dstBmp">目标图像</param>
-        ///// <returns>处理成功 true 失败 false</returns>
-        //internal static bool Rotation(Bitmap srcBmp, double degree, out Bitmap dstBmp)
-        //{
-        //    if (srcBmp == null)
-        //    {
-        //        dstBmp = null;
-        //        return false;
-        //    }
-        //    dstBmp = null;
-        //    BitmapData srcBmpData = null;
-        //    BitmapData dstBmpData = null;
-        //    degree = degree % 360;
-        //    degree = degree < 0 ? degree + 360d : degree;
-        //    if (degree % 90 == 0)
-        //    {
-        //        switch ((int)degree)
-        //        {
-        //            case 0:
-        //                dstBmp = new Bitmap(srcBmp);
-        //                break;
-        //            case 90:
-        //            case 270:
-        //                dstBmp = new Bitmap(srcBmp.Height, srcBmp.Width);
-        //                srcBmpData = srcBmp.LockBits(new Rectangle(0, 0, srcBmp.Width, srcBmp.Height), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
-        //                dstBmpData = dstBmp.LockBits(new Rectangle(0, 0, dstBmp.Width, dstBmp.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
-        //                unsafe
-        //                {
-        //                    byte* ptrSrc = (byte*)srcBmpData.Scan0;
-        //                    byte* ptrDst = (byte*)dstBmpData.Scan0;
-        //                    for (int i = 0; i < srcBmp.Height; i++)
-        //                    {
-        //                        for (int j = 0; j < srcBmp.Width; j++)
-        //                        {
-        //                            var p1 = j * dstBmpData.Stride + (dstBmp.Height - i - 1) * 3;
-        //                            if ((int)degree == 270)
-        //                            {
-        //                                p1 = (srcBmp.Width - j - 1) * dstBmpData.Stride + i * 3;
-        //                            }
-        //                            var p2 = i * srcBmpData.Stride + j * 3;
-        //                            ptrDst[p1] = ptrSrc[p2];
-        //                            ptrDst[p1 + 1] = ptrSrc[p2 + 1];
-        //                            ptrDst[p1 + 2] = ptrSrc[p2 + 2];
-        //                        }
-        //                    }
-        //                }
-        //                srcBmp.UnlockBits(srcBmpData);
-        //                dstBmp.UnlockBits(dstBmpData);
-        //                break;
-        //            case 180:
-        //                dstBmp = new Bitmap(srcBmp.Width, srcBmp.Height);
-        //                srcBmpData = srcBmp.LockBits(new Rectangle(0, 0, srcBmp.Width, srcBmp.Height), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
-        //                dstBmpData = dstBmp.LockBits(new Rectangle(0, 0, dstBmp.Width, dstBmp.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
-        //                unsafe
-        //                {
-        //                    byte* ptrSrc = (byte*)srcBmpData.Scan0;
-        //                    byte* ptrDst = (byte*)dstBmpData.Scan0;
-        //                    for (int i = 0; i < srcBmp.Height; i++)
-        //                    {
-        //                        for (int j = 0; j < srcBmp.Width; j++)
-        //                        {
-        //                            ptrDst[(srcBmp.Width - i - 1) * dstBmpData.Stride + (dstBmp.Height - j - 1) * 3] = ptrSrc[i * srcBmpData.Stride + j * 3];
-        //                            ptrDst[(srcBmp.Width - i - 1) * dstBmpData.Stride + (dstBmp.Height - j - 1) * 3 + 1] = ptrSrc[i * srcBmpData.Stride + j * 3 + 1];
-        //                            ptrDst[(srcBmp.Width - i - 1) * dstBmpData.Stride + (dstBmp.Height - j - 1) * 3 + 2] = ptrSrc[i * srcBmpData.Stride + j * 3 + 2];
-        //                        }
-        //                    }
-        //                }
-        //                srcBmp.UnlockBits(srcBmpData);
-        //                dstBmp.UnlockBits(dstBmpData);
-        //                break;
-        //            default:
-        //                break;
-        //        }
-        //    }
-        //    else
-        //    {
-        //        //任意角度
-        //        //将角度转换为弧度
-        //        double radian = degree * Math.PI / 180.0;
-        //        //计算正弦和余弦
-        //        double sin = Math.Sin(radian);
-        //        double cos = Math.Cos(radian);
-        //        //计算旋转后的图像大小
-        //        int widthDst = (int)(srcBmp.Height * Math.Abs(sin) + srcBmp.Width * Math.Abs(cos));
-        //        int heightDst = (int)(srcBmp.Width * Math.Abs(sin) + srcBmp.Height * Math.Abs(cos));
-        //        dstBmp = new Bitmap(widthDst, heightDst);
-        //        //确定旋转点
-        //        int dx = (int)(srcBmp.Width / 2 * (1 - cos) + srcBmp.Height / 2 * sin);
-        //        int dy = (int)(srcBmp.Width / 2 * (0 - sin) + srcBmp.Height / 2 * (1 - cos));
-        //        int insertBeginX = srcBmp.Width / 2 - widthDst / 2;
-        //        int insertBeginY = srcBmp.Height / 2 - heightDst / 2;
-        //        //插值公式所需参数
-        //        double ku = insertBeginX * cos - insertBeginY * sin + dx;
-        //        double kv = insertBeginX * sin + insertBeginY * cos + dy;
-        //        double cu1 = cos, cu2 = sin;
-        //        double cv1 = sin, cv2 = cos;
-        //        double fu, fv, a, b, F1, F2;
-        //        int Iu, Iv;
-        //        srcBmpData = srcBmp.LockBits(new Rectangle(0, 0, srcBmp.Width, srcBmp.Height), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
-        //        dstBmpData = dstBmp.LockBits(new Rectangle(0, 0, dstBmp.Width, dstBmp.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
-        //        unsafe
-        //        {
-        //            byte* ptrSrc = (byte*)srcBmpData.Scan0;
-        //            byte* ptrDst = (byte*)dstBmpData.Scan0;
-        //            for (int i = 0; i < heightDst; i++)
-        //            {
-        //                for (int j = 0; j < widthDst; j++)
-        //                {
-        //                    fu = j * cu1 - i * cu2 + ku;
-        //                    fv = j * cv1 + i * cv2 + kv;
-        //                    if ((fv < 1) || (fv > srcBmp.Height - 1) || (fu < 1) || (fu > srcBmp.Width - 1))
-        //                    {
-        //                        ptrDst[i * dstBmpData.Stride + j * 3] = 150;
-        //                        ptrDst[i * dstBmpData.Stride + j * 3 + 1] = 150;
-        //                        ptrDst[i * dstBmpData.Stride + j * 3 + 2] = 150;
-        //                    }
-        //                    else
-        //                    {//双线性插值
-        //                        Iu = (int)fu;
-        //                        Iv = (int)fv;
-        //                        a = fu - Iu;
-        //                        b = fv - Iv;
-        //                        for (int k = 0; k < 3; k++)
-        //                        {
-        //                            F1 = (1 - b) * *(ptrSrc + Iv * srcBmpData.Stride + Iu * 3 + k) + b * *(ptrSrc + (Iv + 1) * srcBmpData.Stride + Iu * 3 + k);
-        //                            F2 = (1 - b) * *(ptrSrc + Iv * srcBmpData.Stride + (Iu + 1) * 3 + k) + b * *(ptrSrc + (Iv + 1) * srcBmpData.Stride + (Iu + 1) * 3 + k);
-        //                            *(ptrDst + i * dstBmpData.Stride + j * 3 + k) = (byte)((1 - a) * F1 + a * F2);
-        //                        }
-        //                    }
-        //                }
-        //            }
-        //        }
-        //        srcBmp.UnlockBits(srcBmpData);
-        //        dstBmp.UnlockBits(dstBmpData);
-        //    }
-        //    return true;
-        //}
-
         /// <summary>
         /// 顺时针旋转指定角度
         /// </summary>
         /// <param name="img"></param>
         /// <param name="degree">顺时针角度</param>
         /// <returns></returns>
-        internal static Image GetRotateImage(Image img, int degree)
+        public static Image GetRotateImage(this Image img, int degree)
         {
             if (img == null)
                 return null;
@@ -565,101 +321,114 @@ namespace ZHello.GDI
             return outmap;
         }
 
-        #region 绘制圆角矩形
-
         /// <summary>
-        /// 绘制圆角矩形
+        /// 获取灰度图像
         /// </summary>
-        /// <param name="g"></param>
-        /// <param name="pen"></param>
-        /// <param name="rect"></param>
-        /// <param name="radius"></param>
-        /// <param name="color"></param>
-        public static void DrawRoundedRectangle(Graphics g, Pen pen, Rectangle rect, int radius, Color color)
+        /// <param name="img"></param>
+        /// <returns></returns>
+        public static Image GetGrayImage(this Image img)
         {
-            if (g == null || rect == null || radius < 0)
-                return;
-            // 圆角半径
-            //int radius = radius;
-            var circleSize = new Size(radius * 2, radius * 2);
-            // 指定图形路径， 有一系列 直线/曲线 组成
-            GraphicsPath myPath = new GraphicsPath();
-            myPath.StartFigure();
-
-            //绘制左上角弧线
-            myPath.AddArc(new Rectangle(new Point(rect.X, rect.Y), circleSize), 180, 90);
-            //绘制上边直线
-            myPath.AddLine(new Point(rect.X + radius, rect.Y), new Point(rect.Right - radius, rect.Y));
-
-            //或者有上角弧线
-            myPath.AddArc(new Rectangle(new Point(rect.Right - 2 * radius + (int)pen.Width / 2, rect.Y), circleSize), 270, 90);
-            //绘制右边直线
-            myPath.AddLine(new Point(rect.Right + (int)pen.Width, rect.Y + radius), new Point(rect.Right + (int)pen.Width, rect.Bottom - radius));
-
-            //绘制右下角弧线
-            myPath.AddArc(new Rectangle(new Point(rect.Right - radius * 2 + (int)pen.Width / 2, rect.Bottom - radius * 2), circleSize), 0, 90);
-            //绘制下边直线
-            myPath.AddLine(new Point(rect.Right - radius + (int)pen.Width / 2, rect.Bottom + (int)pen.Width / 2), new Point(rect.X + radius, rect.Bottom + (int)pen.Width / 2));
-
-            //绘制左下角弧线
-            myPath.AddArc(new Rectangle(new Point(rect.X, rect.Bottom - radius * 2 + (int)pen.Width / 2), circleSize), 90, 90);
-            //绘制左边直线
-            myPath.AddLine(new Point(rect.X, rect.Bottom - radius + (int)pen.Width / 2), new Point(rect.X, rect.Y + radius));
-
-            myPath.CloseFigure();
-            g.DrawPath(pen, myPath);
-            g.FillPath(new SolidBrush(color), myPath);
+            var map = new Bitmap(img);
+            var g = new Bitmap(img.Width, img.Height);
+            for (int i = 0; i < img.Width; i++)
+            {
+                for (int j = 0; j < img.Height; j++)
+                {
+                    var c = map.GetPixel(i, j);
+                    var gray = ARGBToGray(c);
+                    g.SetPixel(i, j, gray);
+                }
+            }
+            return g;
         }
 
         /// <summary>
-        /// 绘制圆角矩形
+        /// ARGB颜色转换为灰度颜色
         /// </summary>
-        /// <param name="g"></param>
-        /// <param name="pen"></param>
-        /// <param name="rect"></param>
-        /// <param name="radius"></param>
         /// <param name="color"></param>
-        public static void FillRoundedRectangle(Graphics g, Color color, Rectangle rect, int radius = 0)
+        /// <returns></returns>
+        public static Color ARGBToGray(this Color color)
         {
-            if (g == null || rect == null || radius < 0)
-                return;
-            // 圆角半径
-            //int radius = radius;
-            if (radius == 0)
-            {
-                radius = Math.Min(rect.Width, rect.Height) / 3;
-            }
-            var circleSize = new Size(radius * 2, radius * 2);
-            // 指定图形路径， 有一系列 直线/曲线 组成
-            GraphicsPath myPath = new GraphicsPath();
-            myPath.StartFigure();
-
-            //绘制左上角弧线
-            myPath.AddArc(new Rectangle(new Point(rect.X, rect.Y), circleSize), 180, 90);
-            //绘制上边直线
-            myPath.AddLine(new Point(rect.X + radius, rect.Y), new Point(rect.Right - radius, rect.Y));
-
-            //或者有上角弧线
-            myPath.AddArc(new Rectangle(new Point(rect.Right - 2 * radius, rect.Y), circleSize), 270, 90);
-            //绘制右边直线
-            myPath.AddLine(new Point(rect.Right, rect.Y + radius), new Point(rect.Right, rect.Bottom - radius));
-
-            //绘制右下角弧线
-            myPath.AddArc(new Rectangle(new Point(rect.Right - radius * 2, rect.Bottom - radius * 2), circleSize), 0, 90);
-            //绘制下边直线
-            myPath.AddLine(new Point(rect.Right - radius, rect.Bottom), new Point(rect.X + radius, rect.Bottom));
-
-            //绘制左下角弧线
-            myPath.AddArc(new Rectangle(new Point(rect.X, rect.Bottom - radius * 2), circleSize), 90, 90);
-            //绘制左边直线
-            myPath.AddLine(new Point(rect.X, rect.Bottom - radius), new Point(rect.X, rect.Y + radius));
-            myPath.CloseFigure();
-            using (var brush = new SolidBrush(color))
-            {
-                g.FillPath(brush, myPath);
-            }
+            var gray = (color.R * 19595 + color.G * 38469 + color.B * 7472) >> 16;
+            return Color.FromArgb(color.A, gray, gray, gray);
         }
 
-        #endregion 绘制圆角矩形
+        /// <summary>
+        /// 获取RGB的灰度值
+        /// </summary>
+        /// <param name="r"></param>
+        /// <param name="g"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
+        public static int RgbToGray(int r, int g, int b)
+        {
+            //基础公式：Gray = R*0.299 + G*0.587 + B*0.114
+            //Gray = (R*299 + G*587 + B*114 + 500) / 1000
+            //改进公式：Gray = (R*19595 + G*38469 + B*7472) >> 16
+            r = r > 255 ? 255 : r;
+            g = g > 255 ? 255 : g;
+            b = b > 255 ? 255 : b;
+            r = r < 0 ? 0 : r;
+            g = g < 0 ? 0 : g;
+            b = b < 0 ? 0 : b;
+            return (r * 19595 + g * 38469 + b * 7472) >> 16;
+        }
+
+        /// <summary>
+        /// 获取颜色替换后的图片
+        /// 仅替换指定颜色，其他颜色不变
+        /// </summary>
+        /// <param name="img"></param>
+        /// <param name="lColor">要替换的目标颜色</param>
+        /// <param name="rColor">替换颜色</param>
+        /// <returns></returns>
+        private static Image GetColorReplaceImgage(Image img, Color lColor, Color rColor)
+        {
+            var map = new Bitmap(img);
+            Bitmap g = new Bitmap(map.Width, map.Height);
+            for (int i = 0; i < map.Width; i++)
+            {
+                for (int j = 0; j < map.Height; j++)
+                {
+                    Color c = map.GetPixel(i, j);
+                    if (c.A == lColor.A && c.R == lColor.R && c.G == lColor.G && c.B == lColor.B)
+                    {
+                        g.SetPixel(i, j, Color.FromArgb(c.A, rColor.R, rColor.G, rColor.B));
+                    }
+                }
+            }
+            return g;
+        }
+
+        /// <summary>
+        /// 获取颜色替换后的反色的图片
+        /// 1.将指定的原图片颜色替换为透明白色
+        /// 2.将其他颜色替换为指定颜色
+        /// </summary>
+        /// <param name="img"></param>
+        /// <param name="lColor">要替换的目标颜色</param>
+        /// <param name="rColor">替换颜色</param>
+        /// <returns></returns>
+        private static Image GetColorReplaceInvertedImage(Image img, Color lColor, Color rColor)
+        {
+            var map = new Bitmap(img);
+            Bitmap g = new Bitmap(map.Width, map.Height);
+            for (int i = 0; i < map.Width; i++)
+            {
+                for (int j = 0; j < map.Height; j++)
+                {
+                    Color c = map.GetPixel(i, j);
+                    if (c.A == lColor.A && c.R == lColor.R && c.G == lColor.G && c.B == lColor.B)
+                    {
+                        g.SetPixel(i, j, Color.FromArgb(c.A, Color.White.R, Color.White.G, Color.White.B));
+                    }
+                    else
+                    {
+                        g.SetPixel(i, j, rColor);
+                    }
+                }
+            }
+            return g;
+        }
     }
 }

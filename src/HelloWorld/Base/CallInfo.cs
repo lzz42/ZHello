@@ -49,4 +49,25 @@ namespace ZHello.Base
         {
         }
     }
+
+    public class @class
+    {
+        public static void @static(bool @bool)
+        {
+            if (@bool)
+            {
+                Trace.Write($"{@bool} is value");
+            }
+            else
+            {
+                Trace.Write($"{@bool} was value");
+            }
+        }
+
+        public static void Main()
+        {
+            @class.@static(false);
+            @cl\u0061ss.@st\u0061ti\u0063(false);
+        }
+    }
 }

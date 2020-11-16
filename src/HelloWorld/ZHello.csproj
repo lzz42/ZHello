@@ -196,10 +196,9 @@
     <Compile Include="DesignPattern\CreatePattern.cs" />
     <Compile Include="DesignPattern\SpecialPattern.cs" />
     <Compile Include="DesignPattern\StructPattern.cs" />
-    <Compile Include="GDI\ColorAlgorithm.cs" />
+    <Compile Include="GDI\GDI_Draw.cs" />
     <Compile Include="GDI\ImageConvert.cs" />
     <Compile Include="Common\LicenseHelper.cs" />
-    <Compile Include="GDI\Use_ColorMatrix.cs" />
     <Compile Include="Common\InjectionHelper.cs" />
     <Compile Include="Hook\Hooker.cs" />
     <Compile Include="Hook\InLineHooker.cs" />
@@ -227,14 +226,13 @@
     <Compile Include="Async\Sync.cs" />
     <Compile Include="Async\ThreadSync.cs" />
     <Compile Include="Base\BaseKnowledge.cs" />
-    <Compile Include="CLR\CLR.cs" />
     <Compile Include="CLR\Performance.cs" />
     <Compile Include="Common\ConfigHelper.cs" />
     <Compile Include="DesignPattern\DesignPattern.cs" />
     <Compile Include="OS\InvokeHelper.cs" />
     <Compile Include="MEF\MEFProgram.cs" />
     <Compile Include="Base\MemoryLayout.cs" />
-    <Compile Include="Base\HackersDelight.cs" />
+    <Compile Include="Algorithm\HackersDelight.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Common\RegexHelper.cs" />
     <Compile Include="Net\IPC.cs" />

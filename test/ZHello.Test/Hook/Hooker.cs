@@ -1,27 +1,22 @@
 ﻿using System;
-using System.Reflection;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ZHello.Hook;
 
 namespace ZHello.Test.Hook
 {
     [TestClass]
-    public class HookerTest
+    public class Hooker
     {
         public class OrignClass
         {
-            public int Add(int x,int y)
+            public int Add(int x, int y)
             {
                 Trace.WriteLine($"Call Add X:{x} Y:{y}");
                 return x + y;
             }
 
-            public int Max(int x,int y,int z)
+            public int Max(int x, int y, int z)
             {
                 Trace.WriteLine($"OrignClass Call Max X:{x} Y:{y} Z:{z}");
                 return Math.Max(Math.Max(x, y), z);
@@ -30,25 +25,23 @@ namespace ZHello.Test.Hook
 
         public class HookClass
         {
-            public int HookAdd(int x,int y)
+            public int HookAdd(int x, int y)
             {
                 Trace.WriteLine($"Before Call Add ");
                 return Add(x, y);
             }
 
-            public int Add(int x,int y)
+            public int Add(int x, int y)
             {
                 Trace.WriteLine($"Repea Call Add X:{x} Y:{y}");
                 return (x + y) * 100;
             }
-
 
             public int Min(int x, int y, int z)
             {
                 Trace.WriteLine($"OrignClass Call Min X:{x} Y:{y} Z:{z}");
                 return Math.Min(Math.Min(x, y), z);
             }
-
         }
 
         [TestMethod]
@@ -82,6 +75,5 @@ namespace ZHello.Test.Hook
             zz = orig.Max(10, 20, 30);
             ww = hc.Min(10, 20, 30);
         }
-
     }
 }

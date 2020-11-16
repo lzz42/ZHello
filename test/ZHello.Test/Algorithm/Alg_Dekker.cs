@@ -1,16 +1,15 @@
 ﻿using System.Windows.Forms;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ZHello.Algorithm;
 
 namespace ZHello.Test.Algorithm
 {
     [TestClass]
-    public class Dekker_Algorithm_Test
+    public class Alg_Dekker
     {
         [TestMethod]
-        public void Dekker_Two_Test()
+        public void Dekker_Two()
         {
-            Alg_Dekker.Run_Dekker_Two();
+            ZHello.Algorithm.Alg_Dekker.Run_Dekker_Two();
             var form = new Form();
             form.ShowDialog();
         }

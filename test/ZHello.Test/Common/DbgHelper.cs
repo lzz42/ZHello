@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ZHello.Common;
 using ZHello.Base;
-using System.Diagnostics;
 
 namespace ZHello.Test.Common
 {
     [TestClass]
-    public class DbgHelper_Test
+    public class DbgHelper
     {
         [TestMethod]
         public void Ma()
@@ -40,6 +34,5 @@ namespace ZHello.Test.Common
             a = a ^ b;
             Trace.WriteLine(string.Format("{0}\t {1}", a, b));
         }
-
     }
 }

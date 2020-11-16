@@ -6,7 +6,7 @@ using ZHello.MQ;
 namespace ZHello.Test.MQ
 {
     [TestClass]
-    public class ZeroMqTest
+    public class ZeroMq
     {
         private static void Main(string[] args)
         {
@@ -17,7 +17,7 @@ namespace ZHello.Test.MQ
             Console.ReadLine();
 #else
             Console.WriteLine("Rep Server");
-            var t1 = new ZeroMqTest();
+            var t1 = new ZeroMq();
             t1.RunRepServer();
             Console.ReadLine();
 #endif

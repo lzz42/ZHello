@@ -33,7 +33,6 @@ namespace ZHello.Async
     关于AutoResetEvent与ManualResetEvent
     ResetEvent线程通知事件
     可用于多线程同步 线程控制
-
     AutoResetEvent与ManualResetEvent的区别
     相同点
     1. 都从EventWaitHandle基类派生;
@@ -139,17 +138,6 @@ namespace ZHello.Async
         基础优先级自动调整：16~31系统不会自动提升，0~15才会被动态提升
          */
 
-    public interface IPoll : IDisposable
-    {
-        void Start();
-
-        void Pause();
-
-        void Stop();
-
-        void Work();
-    }
-
     public static class ResetEvent_Semaphore_SpinLock
     {
         public static bool MLock = false;
@@ -212,349 +200,318 @@ namespace ZHello.Async
         }
     }
 
-    public abstract class Poll : IPoll
+    /// <summary>
+    /// 数据的线程本地存储
+    /// </summary>
+    public static class ThreadLocalT
     {
+        public static ThreadLocal<int> count = new ThreadLocal<int>();
+
+        public static ThreadLocal<struct1> st = new ThreadLocal<struct1>();
+
+        public static ThreadLocal<Obj> objs = new ThreadLocal<Obj>(() => { return new Obj(); });
+
+        public static void Run()
+        {
+            Thread th1 = new Thread(() =>
+                {
+                    for (int i = 0; i < 1 << 20; i++)
+                    {
+                        count.Value++;
+                        struct1 stt = st.Value;
+                        stt.A++;
+                        stt.Str += i;
+                        st.Value = stt;
+                        Obj o = objs.Value;
+                        o.Str = "s" + i;
+                        Thread.Sleep(67);
+                        Trace.WriteLine("th1:" + objs.Value.Str);
+                    }
+                });
+
+            Thread th2 = new Thread(() =>
+                {
+                    for (int i = 0; i < 1 << 20; i++)
+                    {
+                        count.Value++;
+                        struct1 stt = st.Value;
+                        stt.A++;
+                        stt.Str += i;
+                        st.Value = stt;
+                        Obj o = objs.Value;
+                        o.Str = "s" + i;
+                        Thread.Sleep(7);
+                        Trace.WriteLine("th2:" + objs.Value.Str);
+                    }
+                });
+            th1.Start();
+            Thread.Sleep(60);
+            th2.Start();
+
+            Thread.Sleep(100);
+            Trace.WriteLine("Main:" + objs.Value.Str);
+        }
+
+        public struct struct1
+        {
+            public int A { get; set; }
+            public string Str { get; set; }
+        }
+
+        public class Obj
+        {
+            public int A { get; set; } = 10;
+
+            public string Str { get; set; } = "ok";
+
+            public struct1 stru { get; set; } = new struct1 { A = 20, Str = "no" };
+
+            public Obj()
+            {
+            }
+        }
+
+        /// <summary>
+        /// 原子操作
+        /// </summary>
+        public class Atom_Operaion
+        {
+            public volatile int IntAtom = 0;
+            public volatile string StrAtom = "ok";
+            public volatile Atom_Operaion Atom;
+
+            public static void P_Invoke()
+            {
+                Thread.BeginThreadAffinity();
+                //该代码必须使用当前物理操作系统线程来执行
+                //P/Invoke Native Code
+                Thread.EndThreadAffinity();
+
+                //设置上下文数据
+                CallContext.SetData("k1", "v1");
+                ThreadPool.QueueUserWorkItem(state =>
+                {
+                    //此时可以访问到上下文数据
+                    Console.WriteLine($"Name={CallContext.GetData("k1")}");
+                });
+                //阻止当前线程的上下文流动
+                //提升应用程序性能
+                ExecutionContext.SuppressFlow();
+                ThreadPool.QueueUserWorkItem(state =>
+                {
+                    //此时将访问不到上下文数据
+                    Console.WriteLine($"Name={CallContext.GetData("k1")}");
+                });
+            }
+
+            public void Atom_Enter()
+            {
+                double d_org = 2.2d;
+                double d_new = 1.1d;
+                double d_old;
+                d_old = Interlocked.Exchange(ref d_org, d_new);
+                SpinLock spinL = new SpinLock();
+                bool r = true;
+                spinL.Enter(ref r);
+                spinL.Exit();
+
+                SpinWait spin = new SpinWait();
+                spin.SpinOnce();
+            }
+        }
+    }
+
+    public abstract class Poller
+    {
+        private ManualResetEvent PauseEvent;
+        private ManualResetEvent StopEvent;
+        private ManualResetEventSlim PauseEventSlim;
+        private ManualResetEventSlim StopEventSlim;
+        private SpinLock ResSpinLock;
+        private SpinWait ResSpinWait;
+        private object lockObj1 = new object();
+        private object lockObj2 = new object();
+        private Semaphore Semaphore1;
+        private SemaphoreSlim SemaphoreSlim2;
+        private Mutex Mutex1;
+        private Mutex Mutex2;
+        private Queue<int> IntQueue1;
+        private Queue<int> IntQueue2;
+        private Queue<int> IntQueue3;
         public Action PollWork { get; set; }
         protected Thread mainThread { get; set; }
 
-        public Poll()
+        public Poller()
         {
             mainThread = new Thread(Work);
+
+            IntQueue1 = new Queue<int>(10);
+            IntQueue2 = new Queue<int>(10);
+            IntQueue3 = new Queue<int>(10);
+
+            ResSpinLock = new SpinLock();
+            ResSpinWait = new SpinWait();
+
+            Semaphore1 = new Semaphore(1, 1);
+            SemaphoreSlim2 = new SemaphoreSlim(1, 1);
+
+            Mutex1 = new Mutex();
+            bool crn = false;
+            /*
+             * 同步基元命名：
+             Global\前缀：与系统进程共享
+             Local\前缀：或者默认，与同一会话的进程共享，会话即一个登陆会话
+            */
+            Mutex2 = new Mutex(true, @"Global\{B8A9C6AC-FB28-43F0-8D9C-C8F1E7F8C53D}");
+
+            Init();
         }
 
-        public abstract void Dispose();
-
-        public abstract void Pause();
-
-        public abstract void Start();
-
-        public abstract void Stop();
-
-        public abstract void Work();
-    }
-
-    public class ManualResetEventPoller : Poll, IPoll
-    {
-        private ManualResetEvent _pauseEvent { get; set; }
-        private ManualResetEvent _stopEvent { get; set; }
-
-        public ManualResetEventPoller()
-        {
-            _pauseEvent = new ManualResetEvent(false);
-            _stopEvent = new ManualResetEvent(false);
-            Pause();
-            mainThread.Start();
-        }
-
-        public override void Dispose()
+        public void Dispose()
         {
             Stop();
-            _pauseEvent.Dispose();
-            _stopEvent.Dispose();
+
+            PauseEvent.Dispose();
+            StopEvent.Dispose();
+
+            PauseEventSlim.Dispose();
+            StopEventSlim.Dispose();
+
+            ResSpinLock.Exit();
+
+            Semaphore1.Release();
+            Semaphore1.Dispose();
+            SemaphoreSlim2.Release();
+            SemaphoreSlim2.Dispose();
         }
 
-        public override void Pause()
+        public void AddDataSafe(int d)
         {
-            _pauseEvent.Set();
-        }
-
-        public override void Start()
-        {
-            _pauseEvent.Reset();
-            _stopEvent.Reset();
-        }
-
-        public override void Stop()
-        {
-            _stopEvent.Set();
-        }
-
-        public override void Work()
-        {
-            while (true)
+            EntryCritical();
+            //lock
+            lock (lockObj1)
             {
-                while (_pauseEvent.WaitOne(1))
-                {
-                    if (_stopEvent.WaitOne(0))
-                    {
-                        System.Diagnostics.Trace.TraceInformation("Poll Exited");
-                        break;
-                    }
-                }
-                if (PollWork != null)
-                {
-                    PollWork.Invoke();
-                }
+                IntQueue2.Enqueue(d);
+            }
+            ExitCritical();
+        }
+
+        public void Pause()
+        {
+            StopEvent.Reset();
+            PauseEvent.Reset();
+
+            StopEventSlim.Reset();
+            PauseEventSlim.Reset();
+        }
+
+        public void Start()
+        {
+            StopEvent.Reset();
+            PauseEvent.Set();
+
+            StopEventSlim.Reset();
+            PauseEventSlim.Set();
+
+            if (mainThread.ThreadState == System.Threading.ThreadState.Unstarted)
+            {
+                mainThread.Start();
             }
         }
-    }
 
-    public class ManualResetEventSlimPoller : Poll, IPoll
-    {
-        private ManualResetEventSlim _pauseEvent { get; set; }
-        private ManualResetEventSlim _stopEvent { get; set; }
-
-        public ManualResetEventSlimPoller()
+        public void Stop()
         {
-            _pauseEvent = new ManualResetEventSlim(false);
-            _stopEvent = new ManualResetEventSlim(false);
-            Pause();
-            mainThread.Start();
+            PauseEvent.Reset();
+            StopEvent.Set();
         }
 
-        public override void Dispose()
+        public void Work()
         {
-            Stop();
-            _pauseEvent.Dispose();
-            _stopEvent.Dispose();
-        }
-
-        public override void Pause()
-        {
-            _pauseEvent.Set();
-        }
-
-        public override void Start()
-        {
-            _pauseEvent.Reset();
-            _stopEvent.Reset();
-        }
-
-        public override void Stop()
-        {
-            _stopEvent.Set();
-        }
-
-        public override void Work()
-        {
+            //ManualResetEvent
             while (true)
             {
-                while (_pauseEvent.Wait(0))
-                {
-                    if (_stopEvent.Wait(0))
-                    {
-                        System.Diagnostics.Trace.TraceInformation("Poll Exited");
-                        break;
-                    }
-                }
-                if (PollWork != null)
-                {
-                    PollWork.Invoke();
-                }
+                if (StopEvent.WaitOne(0))
+                    break;
+                PauseEvent.WaitOne();
+                PollWork?.Invoke();
             }
-        }
-    }
-
-    [Obsolete("未完成Poll", true)]
-    public class AutoResetEventPoller : Poll
-    {
-        private AutoResetEvent _stopEvent { get; set; }
-        private AutoResetEvent _pauseEvent { get; set; }
-
-        public AutoResetEventPoller()
-        {
-            _stopEvent = new AutoResetEvent(false);
-            _pauseEvent = new AutoResetEvent(false);
-            Pause();
-            mainThread.Start();
-        }
-
-        public override void Dispose()
-        {
-            _stopEvent.Dispose();
-            _pauseEvent.Dispose();
-        }
-
-        public override void Pause()
-        {
-            _pauseEvent.Set();
-        }
-
-        public override void Start()
-        {
-            _pauseEvent.Reset();
-            _stopEvent.Reset();
-        }
-
-        public override void Stop()
-        {
-            _stopEvent.Set();
-        }
-
-        public override void Work()
-        {
+            //ManualResetEventSlim
             while (true)
             {
-                while (_pauseEvent.WaitOne(0))
-                {
-                    if (_stopEvent.WaitOne(0))
-                    {
-                        System.Diagnostics.Trace.TraceInformation("Poll Exited");
-                        break;
-                    }
-                }
-                if (PollWork != null)
-                {
-                    PollWork.Invoke();
-                }
+                if (StopEventSlim.Wait(0))
+                    break;
+                PauseEventSlim.Wait(-1);
+                PollWork?.Invoke();
             }
         }
-    }
 
-    public class SemaphoreStorage
-    {
-        private Semaphore chairs { get; set; }
-        private Semaphore blocks { get; set; }
-        private Queue<object> datas { get; set; }
-
-        public SemaphoreStorage(int maxChairs, int maxBlocks)
+        private void Init()
         {
-            chairs = new Semaphore(maxChairs, maxChairs);
-            blocks = new Semaphore(maxBlocks, maxBlocks);
-            datas = new Queue<object>();
+            PauseEvent = new ManualResetEvent(false);
+            StopEvent = new ManualResetEvent(false);
+            PauseEventSlim = new ManualResetEventSlim(false);
+            StopEventSlim = new ManualResetEventSlim(false);
         }
 
-        public void WriteSync(object data)
+        /// <summary>
+        /// 退出临界区
+        /// </summary>
+        private void ExitCritical()
         {
-            chairs.WaitOne();
-            blocks.WaitOne();
-            //write data
-            datas.Enqueue(data);
-            chairs.Release();
+            ResSpinLock.Exit();
+
+
+            Monitor.Exit(lockObj2);
+            Semaphore1.Release();
+            SemaphoreSlim2.Release();
         }
 
-        public void ReadSync(out object data)
+        /// <summary>
+        /// 进入临界区
+        /// </summary>
+        private void EntryCritical()
         {
-            chairs.WaitOne();
-            blocks.Release();
-            //read data
-            data = datas.Dequeue();
-            chairs.Release();
-        }
-    }
-}
-
-/// <summary>
-/// 数据的线程本地存储
-/// </summary>
-public static class ThreadLocalT
-{
-    public static ThreadLocal<int> count = new ThreadLocal<int>();
-
-    public static ThreadLocal<struct1> st = new ThreadLocal<struct1>();
-
-    public static ThreadLocal<Obj> objs = new ThreadLocal<Obj>(() => { return new Obj(); });
-
-    public static void Run()
-    {
-        Thread th1 = new Thread(() =>
+            //自旋锁
+            var k = false;
+            ResSpinLock.TryEnter(100, ref k);
+            if (!k)
             {
-                for (int i = 0; i < 1 << 20; i++)
+                //手动进行自旋
+                int max = 1024;
+                while (true)
                 {
-                    count.Value++;
-                    struct1 stt = st.Value;
-                    stt.A++;
-                    stt.Str += i;
-                    st.Value = stt;
-                    Obj o = objs.Value;
-                    o.Str = "s" + i;
-                    Thread.Sleep(67);
-                    Trace.WriteLine("th1:" + objs.Value.Str);
+                    if (max > 1024)
+                    {
+                        throw new Exception("获取SpinLock锁超过指定次数");
+                    }
+                    max++;
+                    ResSpinWait.Reset();
+                    ResSpinWait.SpinOnce();
+                    ResSpinLock.TryEnter(50, ref k);
+                    if (k)
+                        break;
                 }
-            });
-
-        Thread th2 = new Thread(() =>
-            {
-                for (int i = 0; i < 1 << 20; i++)
+                //系统封装自旋
+                if (!SpinWait.SpinUntil(() =>
                 {
-                    count.Value++;
-                    struct1 stt = st.Value;
-                    stt.A++;
-                    stt.Str += i;
-                    st.Value = stt;
-                    Obj o = objs.Value;
-                    o.Str = "s" + i;
-                    Thread.Sleep(7);
-                    Trace.WriteLine("th2:" + objs.Value.Str);
+                    ResSpinLock.TryEnter(10, ref k);
+                    return k;
+                }, 1000))
+                {
+                    throw new Exception("获取SpinLock锁超时");
                 }
-            });
-        th1.Start();
-        Thread.Sleep(60);
-        th2.Start();
-
-        Thread.Sleep(100);
-        Trace.WriteLine("Main:" + objs.Value.Str);
-    }
-
-    public struct struct1
-    {
-        public int A { get; set; }
-        public string Str { get; set; }
-    }
-
-    public class Obj
-    {
-        public int A { get; set; } = 10;
-
-        public string Str { get; set; } = "ok";
-
-        public struct1 stru { get; set; } = new struct1 { A = 20, Str = "no" };
-
-        public Obj()
-        {
-        }
-    }
-
-    /// <summary>
-    /// 原子操作
-    /// </summary>
-    public class Atom_Operaion
-    {
-        public volatile int IntAtom = 0;
-        public volatile string StrAtom = "ok";
-        public volatile Atom_Operaion Atom;
-
-        public void Atom_Enter()
-        {
-            double d_org = 2.2d;
-            double d_new = 1.1d;
-            double d_old;
-            d_old = Interlocked.Exchange(ref d_org, d_new);
-            SpinLock spinL = new SpinLock();
-            bool r = true;
-            spinL.Enter(ref r);
-            spinL.Exit();
-
-            SpinWait spin = new SpinWait();
-            spin.SpinOnce();
-        }
-
-        public void P_Invoke()
-        {
-            Thread.BeginThreadAffinity();
-            //该代码必须使用当前物理操作系统线程来执行
-            //P/Invoke Native Code
-            Thread.EndThreadAffinity();
-
-            //设置上下文数据
-            CallContext.SetData("k1", "v1");
-            ThreadPool.QueueUserWorkItem(state =>
+            }
+            //minitor
+            Monitor.Enter(lockObj2);
+            //semphare
+            if (!Semaphore1.WaitOne(1000))
             {
-                //此时可以访问到上下文数据
-                Console.WriteLine($"Name={CallContext.GetData("k1")}");
-            });
-            //阻止当前线程的上下文流动
-            //提升应用程序性能
-            ExecutionContext.SuppressFlow();
-            ThreadPool.QueueUserWorkItem(state =>
+                throw new Exception("获取Sempahre资源超时");
+            }
+            if (!SemaphoreSlim2.Wait(1000))
             {
-                //此时将访问不到上下文数据
-                Console.WriteLine($"Name={CallContext.GetData("k1")}");
-            });
-        }
-
-        public void ExecutionContextTest()
-        {
+                throw new Exception("获取SempahreSlim资源超时");
+            }
         }
     }
 }

@@ -60,12 +60,13 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Algorithm\Dekker_Algorithm_Test.cs" />
-    <Compile Include="Algorithm\Peterson_Algorithm_Test.cs" />
-    <Compile Include="Common\DbgHelper_Test.cs" />
-    <Compile Include="Hook\HookerTest.cs" />
-    <Compile Include="MQ\ZeroMqTest.cs" />
-    <Compile Include="OS\UseFont_Test.cs" />
+    <Compile Include="Algorithm\Alg_Dekker.cs" />
+    <Compile Include="Algorithm\Alg_Peterson.cs" />
+    <Compile Include="Common\DbgHelper.cs" />
+    <Compile Include="GDI\GDI_Draw.cs" />
+    <Compile Include="Hook\Hooker.cs" />
+    <Compile Include="MQ\ZeroMq.cs" />
+    <Compile Include="OS\UseFont.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -77,6 +78,11 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="OS\娃娃体W5-GB.ttc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="GDI\ColorRing.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
