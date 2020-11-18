@@ -10,15 +10,6 @@ namespace ZHello.Base
     /// </summary>
     public class CallInfo
     {
-        public static string RecordMethodInfo()
-        {
-            var minfo = GetCallMethodInfo(2);
-            return string.Format("Tid:{0},Assembly:{1},MethodInfo:{2}"
-                , Thread.CurrentThread.ManagedThreadId
-                , Assembly.GetCallingAssembly().FullName
-                , minfo.ToString()
-                );
-        }
 
         public static string[] GetCallMethodInfo(int deep = 1)
         {
@@ -37,19 +28,15 @@ namespace ZHello.Base
             };
         }
 
-        public static void GetCallMemberName([CallerMemberName] string name = "")
+        public static void GetCallingInfo([CallerMemberName] string name = "", [CallerLineNumber] int lineNumber = -1, [CallerFilePath] string filePath = "")
         {
-        }
 
-        public static void GetLineNumber([CallerLineNumber] int lineNumber = -1)
-        {
-        }
-
-        public static void GetFilePath([CallerFilePath] string filePath = "")
-        {
         }
     }
 
+    /// <summary>
+    /// 使用@将关键字作为普通字符串使用
+    /// </summary>
     public class @class
     {
         public static void @static(bool @bool)

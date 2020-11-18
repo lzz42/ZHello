@@ -327,17 +327,20 @@ namespace ZHello.Async
         private ManualResetEvent StopEvent;
         private ManualResetEventSlim PauseEventSlim;
         private ManualResetEventSlim StopEventSlim;
+
         private SpinLock ResSpinLock;
         private SpinWait ResSpinWait;
+
         private object lockObj1 = new object();
         private object lockObj2 = new object();
+
         private Semaphore Semaphore1;
         private SemaphoreSlim SemaphoreSlim2;
+
         private Mutex Mutex1;
         private Mutex Mutex2;
+
         private Queue<int> IntQueue1;
-        private Queue<int> IntQueue2;
-        private Queue<int> IntQueue3;
         public Action PollWork { get; set; }
         protected Thread mainThread { get; set; }
 
@@ -346,8 +349,6 @@ namespace ZHello.Async
             mainThread = new Thread(Work);
 
             IntQueue1 = new Queue<int>(10);
-            IntQueue2 = new Queue<int>(10);
-            IntQueue3 = new Queue<int>(10);
 
             ResSpinLock = new SpinLock();
             ResSpinWait = new SpinWait();
@@ -383,6 +384,11 @@ namespace ZHello.Async
             Semaphore1.Dispose();
             SemaphoreSlim2.Release();
             SemaphoreSlim2.Dispose();
+
+            Mutex1.Close();
+            Mutex1.Dispose();
+            Mutex2.Close();
+            Mutex2.Dispose();
         }
 
         public void AddDataSafe(int d)
@@ -391,7 +397,7 @@ namespace ZHello.Async
             //lock
             lock (lockObj1)
             {
-                IntQueue2.Enqueue(d);
+                IntQueue1.Enqueue(d);
             }
             ExitCritical();
         }
@@ -460,7 +466,6 @@ namespace ZHello.Async
         {
             ResSpinLock.Exit();
 
-
             Monitor.Exit(lockObj2);
             Semaphore1.Release();
             SemaphoreSlim2.Release();
@@ -480,23 +485,25 @@ namespace ZHello.Async
                 int max = 1024;
                 while (true)
                 {
-                    if (max > 1024)
+                    if (max <= 0)
                     {
                         throw new Exception("获取SpinLock锁超过指定次数");
                     }
                     max++;
                     ResSpinWait.Reset();
                     ResSpinWait.SpinOnce();
-                    ResSpinLock.TryEnter(50, ref k);
+                    ResSpinLock.TryEnter(20, ref k);
                     if (k)
                         break;
                 }
+
                 //系统封装自旋
-                if (!SpinWait.SpinUntil(() =>
+                var r = SpinWait.SpinUntil(() =>
                 {
                     ResSpinLock.TryEnter(10, ref k);
                     return k;
-                }, 1000))
+                }, 1000);
+                if (!r)
                 {
                     throw new Exception("获取SpinLock锁超时");
                 }

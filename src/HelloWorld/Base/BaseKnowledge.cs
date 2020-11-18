@@ -32,29 +32,6 @@ namespace ZHello.Base
             return k.ToString().GetHashCode().ToString();
         }
 
-        /// <summary>
-        /// 编译器条件编译
-        /// </summary>
-        [Conditional(conditionString: "Release")]
-        private static void Fun1()
-        {
-        }
-
-        private static void Main()
-        {
-            var k = new BaseKnowledge();
-            int a = k;
-            string s = (string)k;
-            AppDomain.CurrentDomain.AssemblyLoad += CurrentDomain_AssemblyLoad;
-            AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
-            AppDomain.CurrentDomain.DomainUnload += CurrentDomain_DomainUnload;
-            var v = Assembly.GetExecutingAssembly().GetName().Version;
-            var v1 = Assembly.GetExecutingAssembly().GetName().VersionCompatibility;
-            var v2 = Assembly.GetExecutingAssembly().GetCustomAttributesData();
-            //Run();
-            //RunRegex();
-            Console.ReadLine();
-        }
         public static DateTime GetDllBuildDate(string version)
         {
             if (string.IsNullOrEmpty(version))
@@ -71,28 +48,71 @@ namespace ZHello.Base
             return b;
         }
 
-        private static void CurrentDomain_DomainUnload(object sender, EventArgs e)
+        public static void GetDllVersionInfo(out string version, out DateTime time)
         {
-            throw new NotImplementedException();
+            version = null;
+            time = DateTime.MinValue;
+            version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            time = GetDllBuildDate(version);
         }
 
+        /// <summary>
+        /// 编译器条件编译
+        /// </summary>
+        [Conditional(conditionString: "Release")]
+        public static void Fun1()
+        {
+
+        }
+
+        public static void Main()
+        {
+            var k = new BaseKnowledge();
+            int a = k;
+            string s = (string)k;
+            AppDomain.CurrentDomain.DomainUnload -= CurrentDomain_DomainUnload;
+            AppDomain.CurrentDomain.DomainUnload += CurrentDomain_DomainUnload;
+            AppDomain.CurrentDomain.AssemblyLoad -= CurrentDomain_AssemblyLoad;
+            AppDomain.CurrentDomain.AssemblyLoad += CurrentDomain_AssemblyLoad;
+            AppDomain.CurrentDomain.AssemblyResolve -= CurrentDomain_AssemblyResolve;
+            AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
+            var v = Assembly.GetExecutingAssembly().GetName().Version;
+            var v1 = Assembly.GetExecutingAssembly().GetName().VersionCompatibility;
+            var v2 = Assembly.GetExecutingAssembly().GetCustomAttributesData();
+            Console.ReadLine();
+        }
+
+        /// <summary>
+        /// 当前应用程序域卸载
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private static void CurrentDomain_DomainUnload(object sender, EventArgs e)
+        {
+        }
+
+        /// <summary>
+        /// 应用程序集加载
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        private static void CurrentDomain_AssemblyLoad(object sender, AssemblyLoadEventArgs args)
+        {
+            var ass = args.LoadedAssembly;
+        }
+
+
+        /// <summary>
+        /// 程序集解析失败
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
         private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
         {
             var ass = args.Name;
             var sa = args.RequestingAssembly;
-            throw new NotImplementedException();
-        }
-
-        private static void CurrentDomain_AssemblyLoad(object sender, AssemblyLoadEventArgs args)
-        {
-            //throw new NotImplementedException();
-            var ass = args.LoadedAssembly;
-        }
-
-        public abstract class BClass
-        {
-            public virtual string S { get; set; }
-            public abstract string AS { get; set; }
+            return null;
         }
     }
 }
@@ -108,25 +128,18 @@ namespace ZHello.Base
 * CLR
 * 公共语言运行时（Common Language Runtime）-确保应用程序符合安全规则，并为应用程序提供资源；
 * 微软专用的运行环境CLR遵循标准就是CLI；
-*
 * VES
 * 运行环境-Virtual Execution System
-*
 * CTS
 * CLI的核心组成-通用类型系统（Common Type System），定义编程语言的类型和操作规范；
-*
 * CLS
 * 公共语言规范-（Common Language Specification）-提供高级语言互操作的规范；
-*
 * Managed Code
 * 托管代码-通过.net编写的程序；
-*
 * CIL
 * 托管代码通过公共中间语言（Common Intermediate Language ）和文件格式进行传输和存储
 * 所有的源代码语言都要编译成CIL指令集。MSIL-Microsoft实现的CIL；
-*
 * 托管数据由CLR自动分配和释放，存储在托管堆上（managed heap），通过垃圾回收机制自动释放数据。
-*
 * 托管堆（managed heap）
 * 应用程序第一次启动，CLR为该应用程序预留一块内存即托管堆
 * 堆：带有内存基址的一块内存区。内存区连续，存储区按线性方式分配，垃圾回收

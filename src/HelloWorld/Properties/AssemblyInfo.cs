@@ -35,8 +35,8 @@ using System.Runtime.InteropServices;
 // 方法是按如下所示使用“*”: :
 [assembly: AssemblyVersion("1.0.*")]
 //文件属性---文件版本
-[assembly: AssemblyFileVersion("1.3.0.2")]
+//[assembly: AssemblyFileVersion("1.3.0.2")]
 //文件属性---产品版本
-[assembly: AssemblyInformationalVersion("2.0.1.0")]
+//[assembly: AssemblyInformationalVersion("2.0.1.0")]
 [assembly: InternalsVisibleTo("ZHello.Test")]
 
