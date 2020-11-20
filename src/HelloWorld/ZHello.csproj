@@ -175,6 +175,12 @@
     <Compile Include="Algorithm\LRU.cs" />
     <Compile Include="Algorithm\LZW.cs" />
     <Compile Include="Algorithm\Alg_Peterson.cs" />
+    <Compile Include="Algorithm\Sort\BubbleSort.cs" />
+    <Compile Include="Algorithm\Sort\InsertSort.cs" />
+    <Compile Include="Algorithm\Sort\MergeSort.cs" />
+    <Compile Include="Algorithm\Sort\QuickSort.cs" />
+    <Compile Include="Algorithm\Sort\SelectSort.cs" />
+    <Compile Include="Algorithm\Sort\Sort.cs" />
     <Compile Include="Async\SyncException.cs" />
     <Compile Include="Base\CSharp7.0.cs" />
     <Compile Include="Base\CallInfo.cs" />
@@ -200,6 +206,7 @@
     <Compile Include="GDI\ImageConvert.cs" />
     <Compile Include="Common\LicenseHelper.cs" />
     <Compile Include="Common\InjectionHelper.cs" />
+    <Compile Include="GDI\UseMatrix.cs" />
     <Compile Include="Hook\Hooker.cs" />
     <Compile Include="Hook\InLineHooker.cs" />
     <Compile Include="MQ\IDealer.cs" />
@@ -222,7 +229,6 @@
     <Compile Include="OS\UseFont.cs" />
     <Compile Include="Other\PipelineStyleProgram.cs" />
     <Compile Include="HelloWorld.cs" />
-    <Compile Include="Algorithm\Sort_Algorithm.cs" />
     <Compile Include="Async\Sync.cs" />
     <Compile Include="Async\ThreadSync.cs" />
     <Compile Include="Base\BaseKnowledge.cs" />

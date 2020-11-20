@@ -62,8 +62,10 @@
   <ItemGroup>
     <Compile Include="Algorithm\Alg_Dekker.cs" />
     <Compile Include="Algorithm\Alg_Peterson.cs" />
+    <Compile Include="Algorithm\Sort\Sort.cs" />
     <Compile Include="Common\DbgHelper.cs" />
     <Compile Include="GDI\GDI_Draw.cs" />
+    <Compile Include="GDI\UseMatirx.cs" />
     <Compile Include="Hook\Hooker.cs" />
     <Compile Include="MQ\ZeroMq.cs" />
     <Compile Include="OS\UseFont.cs" />
