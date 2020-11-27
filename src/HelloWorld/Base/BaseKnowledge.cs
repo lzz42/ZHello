@@ -1,17 +1,36 @@
-﻿using System;
+﻿
+#define DEBUGX
+
+#undef DEBUGX
+
+using System;
 using System.Diagnostics;
 using System.Reflection;
 
 namespace ZHello.Base
 {
+
     public class BaseKnowledge
     {
         public interface ITest
         {
+#if DEBUGX
+            int Index {get;set;}
+#elif DEBUGX2
+            int Index2 {get;set;}
+#else
+            int Index {get;set;}
+#endif
             string S { get; set; }
             Delegate MDelegate { get; set; }
 
             void Func1();
+        }
+
+        public interface ITest2<T>
+        {
+            T Obj { get; set; }
+
         }
 
         /// <summary>
@@ -62,7 +81,6 @@ namespace ZHello.Base
         [Conditional(conditionString: "Release")]
         public static void Fun1()
         {
-
         }
 
         public static void Main()
@@ -100,7 +118,6 @@ namespace ZHello.Base
         {
             var ass = args.LoadedAssembly;
         }
-
 
         /// <summary>
         /// 程序集解析失败

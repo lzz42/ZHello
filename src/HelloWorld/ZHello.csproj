@@ -206,6 +206,10 @@
     <Compile Include="GDI\ImageConvert.cs" />
     <Compile Include="Common\LicenseHelper.cs" />
     <Compile Include="Common\InjectionHelper.cs" />
+    <Compile Include="GDI\UI\AxisRenderer.cs" />
+    <Compile Include="GDI\UI\ZControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="GDI\UseMatrix.cs" />
     <Compile Include="Hook\Hooker.cs" />
     <Compile Include="Hook\InLineHooker.cs" />
