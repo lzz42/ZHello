@@ -1,8 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
-using System.Windows.Forms;
 
 namespace ZHello.GDI
 {
@@ -338,32 +338,298 @@ namespace ZHello.GDI
         }
 
         #endregion 绘制坐标轴
-    }
 
-    public class ZForm : Form
-    {
-        public ZForm()
+        #region 绘制标记与正多边形
+
+        /// <summary>
+        /// 绘制图片标记
+        /// </summary>
+        /// <param name="g"></param>
+        /// <param name="point"></param>
+        /// <param name="img"></param>
+        /// <param name="color"></param>
+        /// <param name="text"></param>
+        /// <param name="radis"></param>
+        public static void DrawMark(this Graphics g, PointF point, Image img, Color color, string text = null, float radis = 5f)
         {
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+            var p = new PointF(point.X, point.Y);
+            var f = radis;
+            p.X -= f;
+            p.Y -= f;
+            using (var brush = new SolidBrush(color))
+            {
+                if (img != null)
+                {
+                    g.DrawImage(img, p.X, p.Y, 2 * f, 2 * f);
+                }
+                if (!string.IsNullOrEmpty(text))
+                {
+                    using (var font = new Font("微软雅黑", 2 * f))
+                    {
+                        var size = g.MeasureString(text, font);
+                        p.Y += f;
+                        p.Y += 1;
+                        p.X += f;
+                        p.X -= size.Width / 2;
+                        g.DrawString(text, font, brush, p);
+                    }
+                }
+            }
         }
 
-        public void DrawTestGrahpics()
+        /// <summary>
+        /// 绘制圆点
+        /// </summary>
+        /// <param name="g"></param>
+        /// <param name="p"></param>
+        /// <param name="color"></param>
+        /// <param name="text"></param>
+        public static void DrawDot(this Graphics g, PointF p, Color color, string text = null)
         {
-            var dc = CreateGraphics();
-            dc.SmoothingMode = SmoothingMode.AntiAlias;
-            var rect = new RectangleF(new PointF(0, 0), dc.VisibleClipBounds.Size);
-            rect.Inflate(-20, -20);
-            //rect.Offset(10, 10);
-            dc.DrawRectangles(Pens.Red, new RectangleF[] { rect });
-            dc.DrawEllipse(Pens.Green, rect);
-            var s = $"X:{rect.X},Y:{rect.Y},W:{rect.Width},H:{rect.Height}";
-            var loc = rect.Location;
-            dc.DrawString(s, new Font("微软雅黑", 14f), Brushes.Black, loc);
-            loc.Y += 15;
-            s = $"X:{this.Location.X},Y:{this.Location.Y},W:{this.Width},H:{this.Height}";
-            dc.DrawString(s, new Font("微软雅黑", 14f), Brushes.Black, loc);
-
-            dc.DrawAxisX(Color.Red, new Rectangle(100, 100, 400, 200), 10);
-            dc.DrawAxisY(Color.Red, new Rectangle(100, 100, 200, 400), 10);
+            DrawMark(g, p, color, text: text, markType: "dot");
         }
+
+        /// <summary>
+        /// 绘制矩形
+        /// </summary>
+        /// <param name="g"></param>
+        /// <param name="p"></param>
+        /// <param name="color"></param>
+        /// <param name="text"></param>
+        public static void DrawRect(this Graphics g, PointF p, Color color, string text = null)
+        {
+            DrawMark(g, p, color, text: text, markType: "rect");
+        }
+
+        /// <summary>
+        /// 绘制X形标记
+        /// </summary>
+        /// <param name="g"></param>
+        /// <param name="p"></param>
+        /// <param name="color"></param>
+        /// <param name="text"></param>
+        public static void DrawX(this Graphics g, PointF p, Color color, string text = null)
+        {
+            DrawMark(g, p, color, text: text, markType: "x");
+        }
+
+        /// <summary>
+        /// 绘制+形标记
+        /// </summary>
+        /// <param name="g"></param>
+        /// <param name="p"></param>
+        /// <param name="color"></param>
+        /// <param name="text"></param>
+        public static void DrawPlus(this Graphics g, PointF p, Color color, string text = null)
+        {
+            DrawMark(g, p, color, text: text, markType: "+");
+        }
+
+        /// <summary>
+        /// 绘制正三角标记
+        /// </summary>
+        /// <param name="g"></param>
+        /// <param name="p"></param>
+        /// <param name="color"></param>
+        /// <param name="text"></param>
+        public static void DrawTri(this Graphics g, PointF p, Color color, string text = null)
+        {
+            DrawMark(g, p, color, text: text, markType: "triangle");
+        }
+
+        /// <summary>
+        /// 绘制星形标记
+        /// </summary>
+        /// <param name="g"></param>
+        /// <param name="p"></param>
+        /// <param name="color"></param>
+        /// <param name="text"></param>
+        public static void DrawStar(this Graphics g, PointF p, Color color, string text = null)
+        {
+            DrawMark(g, p, color, text: text, markType: "star");
+        }
+
+        /// <summary>
+        /// 绘制标记
+        /// </summary>
+        /// <param name="g"></param>
+        /// <param name="point"></param>
+        /// <param name="color"></param>
+        /// <param name="radius"></param>
+        /// <param name="text"></param>
+        /// <param name="markType"></param>
+        public static void DrawMark(this Graphics g, PointF point, Color color, float radius = 5f, string text = null, string markType = "dot")
+        {
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+            var p = new PointF(point.X, point.Y);
+            var f = radius;
+            p.X -= f;
+            p.Y -= f;
+            using (var brush = new SolidBrush(color))
+            {
+                switch (markType.ToLower())
+                {
+                    case "rect":
+                        g.FillRectangle(brush, p.X, p.Y, 2 * f, 2 * f);
+                        break;
+
+                    case "triangle":
+                        g.DrawTriangle(point, radius + 3, color);
+                        break;
+
+                    case "+":
+                        var pen = new Pen(brush);
+                        g.DrawLine(pen, p.X, p.Y + f, p.X + 2 * f, p.Y + f);
+                        g.DrawLine(pen, p.X + f, p.Y, p.X + f, p.Y + 2 * f);
+                        pen.Dispose();
+                        break;
+
+                    case "x":
+                        var pen1 = new Pen(brush);
+                        g.DrawLine(pen1, p.X, p.Y, p.X + 2 * f, p.Y + 2 * f);
+                        g.DrawLine(pen1, p.X, p.Y + 2 * f, p.X + 2 * f, p.Y);
+                        pen1.Dispose();
+                        break;
+
+                    case "dot":
+                    default:
+                        g.FillEllipse(brush, p.X, p.Y, 2 * f, 2 * f);
+                        break;
+                }
+                if (!string.IsNullOrEmpty(text))
+                {
+                    using (var font = new Font("微软雅黑", 2 * f))
+                    {
+                        var size = g.MeasureString(text, font);
+                        p.Y += f;
+                        p.Y += 2;
+                        p.X += f;
+                        p.X -= size.Width / 2;
+                        g.DrawString(text, font, brush, p);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// 绘制正三角形
+        /// </summary>
+        /// <param name="g"></param>
+        /// <param name="point"></param>
+        /// <param name="radius"></param>
+        /// <param name="color"></param>
+        public static void DrawTriangle(this Graphics g, PointF point, float radius, Color color)
+        {
+            var points = new List<PointF>();
+            points.Add(new PointF(point.X, point.Y - radius));
+            float dh = (float)(radius * Math.Sin(Math.PI * 30 / 180));
+            float dw = (float)(radius * Math.Cos(Math.PI * 30 / 180));
+            points.Add(new PointF(point.X + dw, point.Y + dh));
+            points.Add(new PointF(point.X - dw, point.Y + dh));
+            using (var brush = new SolidBrush(color))
+            {
+                g.FillPolygon(Brushes.Green, points.ToArray());
+            }
+        }
+
+        /// <summary>
+        /// 绘制五角星
+        /// </summary>
+        /// <param name="g"></param>
+        /// <param name="point"></param>
+        /// <param name="radius"></param>
+        /// <param name="color"></param>
+        public static void DrawStar(this Graphics g, PointF point, float radius, Color color)
+        {
+            //中心点
+            PointF centerP = point;
+            var path = new GraphicsPath(FillMode.Winding);
+            var angle = 360 / 5;
+            var pointFs = new List<PointF>();
+            //g.DrawDot(centerP, Color.Black, "00");
+            for (int i = 0; i < 5; i++)
+            {
+                float x0, y0;
+                x0 = radius * (float)Math.Cos(Math.PI / 180 * angle * (i + 1));
+                y0 = radius * (float)Math.Sin(Math.PI / 180 * angle * (i + 1));
+                var p2 = new PointF(x0, y0);
+                p2.X += centerP.X;
+                p2.Y += centerP.Y;
+                pointFs.Add(p2);
+                //g.DrawX(p2, Color.Red, i.ToString());
+            }
+            path.AddLine(pointFs[0], pointFs[3]);
+            path.AddLine(pointFs[3], pointFs[1]);
+            path.AddLine(pointFs[1], pointFs[4]);
+            path.AddLine(pointFs[4], pointFs[2]);
+            path.AddLine(pointFs[2], pointFs[0]);
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+            using (var brush = new SolidBrush(color))
+            {
+                g.DrawPath(Pens.Red, path);
+                //g.FillPath(brush, path);
+            }
+            path.Dispose();
+        }
+
+        /// <summary>
+        /// 连线参数
+        /// </summary>
+        public static int DDX = 1;
+
+        /// <summary>
+        /// 绘制正多边形
+        /// </summary>
+        /// <param name="g"></param>
+        /// <param name="point"></param>
+        /// <param name="radius"></param>
+        /// <param name="edges"></param>
+        /// <param name="color"></param>
+        public static void DrawPolygonX(this Graphics g, PointF point, float radius, int edges, Color color)
+        {
+            //中心点
+            PointF centerP = point;
+            var path = new GraphicsPath(FillMode.Winding);
+            if (edges < 3)
+                edges = 3;
+            var angle = 360 / edges;
+            var pointFs = new List<PointF>();
+            g.DrawTri(centerP, Color.Red);
+            for (int i = 0; i < edges; i++)
+            {
+                float x0, y0;
+                x0 = radius * (float)Math.Cos(Math.PI / 180 * angle * (i + 1));
+                y0 = radius * (float)Math.Sin(Math.PI / 180 * angle * (i + 1));
+                var p2 = new PointF(x0, y0);
+                p2.X += centerP.X;
+                p2.Y += centerP.Y;
+                pointFs.Add(p2);
+                g.DrawDot(p2, Color.Coral, i.ToString());
+            }
+            int k = 0;
+            int t = DDX >= edges ? DDX % edges : DDX;
+            for (int i = 0; i < edges; i++)
+            {
+                var p = (k + t) % edges;
+                if (p < 0)
+                    p = -p;
+                path.AddLine(pointFs[k], pointFs[p]);
+                k = p;
+            }
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+            using (var brush = new SolidBrush(color))
+            {
+                //g.DrawPath(Pens.Red, path);
+                //g.FillPath(brush, path);
+            }
+            using (var pen = new Pen(color,1))
+            {
+                g.DrawPath(pen, path);
+            }
+            path.Dispose();
+        }
+
+        #endregion 绘制标记与正多边形
     }
 }

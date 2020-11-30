@@ -210,6 +210,9 @@
     <Compile Include="GDI\UI\ZControl.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="GDI\UI\ZForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="GDI\UseMatrix.cs" />
     <Compile Include="Hook\Hooker.cs" />
     <Compile Include="Hook\InLineHooker.cs" />

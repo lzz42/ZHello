@@ -50,9 +50,7 @@ namespace ZHello.GDI.UI
         }
 
         public Rectangle Bounds { get; set; }
-
         public bool Visible { get; set; }
-
         public Color AxisColor { get; set; }
         public Font AxisTextFont { get; set; }
         public int AxixTextDistance { get; set; }
@@ -65,7 +63,6 @@ namespace ZHello.GDI.UI
         public AxisType AxisType { get; set; }
         public string[] AxisXLables { get; set; }
         public string[] AxisYLables { get; set; }
-
 
         public virtual void Render(Graphics g)
         {
@@ -97,7 +94,6 @@ namespace ZHello.GDI.UI
             {
                 g.DrawString(ex.Message, AxisTextFont, Brushes.Red, 10, 10);
                 g.DrawString(ex.StackTrace, AxisTextFont, Brushes.Red, 10, 10 + AxisTextFont.Height);
-                //g.DrawString(ex.Source, AxisTextFont, Brushes.Red, 10, 10 + AxisTextFont.Height * 2);
             }
         }
 
