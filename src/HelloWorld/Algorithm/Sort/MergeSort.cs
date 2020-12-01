@@ -8,6 +8,13 @@ namespace ZHello.Algorithm.Sort
 {
     public class MergeSort : Sort, ISort
     {
+        /// <summary>
+        /// 
+        /// 1.分解 将队列分解为可以解决的两个基元队列
+        /// 2.解决 解决基元队列
+        /// 3.合并 合并所有的已解决的基元队列
+        /// </summary>
+        /// <param name="a"></param>
         public void Sort(int[] a)
         {
             SortCore(a, 0, a.Length - 1);
@@ -35,10 +42,11 @@ namespace ZHello.Algorithm.Sort
             {
                 L[i] = a[p+i];
             }
-            for (i = 0; i < n2; i++)
+            for (j = 0; j < n2; j++)
             {
-                R[i] = a[q+i];
+                R[j] = a[q + j + 1];
             }
+            //添加哨兵
             L[n1] = int.MaxValue;
             R[n2] = int.MaxValue;
             i = 0;

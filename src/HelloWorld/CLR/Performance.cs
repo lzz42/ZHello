@@ -25,22 +25,15 @@
         1.尽量使用静态类中的静态方法 - 静态方法IL代码为call；
         2.尽量使用非虚方法，某些编译器会使用call调用非虚方法（C#编译器会使用callvirt调用所有的实例方法）；
         3.调用值类型中的方法，一般使用call；
-        4.尽量使用sealed 密封类，JIT使用非虚方式（call）调用该类中的虚方法（C#编译器生成callvirt指令，JIT会优化这个调用）；
+        4.尽量使用sealed密封类，JIT使用非虚方式（call）调用该类中的虚方法（C#编译器生成callvirt指令，JIT会优化这个调用）；
 
     类型构造器
 
     Try...Catch..
-    
+
     Demand和LinkDemand
-    
 
      */
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ZHello.CLR
 {
@@ -60,7 +53,6 @@ namespace ZHello.CLR
             objB.SubNormalFunc();    //callvirt
             objB.ToString();
 
-
             ValueType.StaticFunc();
             ValueType vt;
             vt.NormalFunc();
@@ -68,6 +60,7 @@ namespace ZHello.CLR
             vt2.NormalFunc();
         }
     }
+
     public abstract class BaseClass
     {
         /// <summary>
@@ -76,6 +69,7 @@ namespace ZHello.CLR
         public virtual void BaseVirtualFunc()
         {
         }
+
         /// <summary>
         /// 基类普通方法
         /// </summary>
@@ -83,7 +77,8 @@ namespace ZHello.CLR
         {
         }
     }
-    public class ClassA: BaseClass
+
+    public class ClassA : BaseClass
     {
         public static void StaticFunc()
         {
@@ -92,6 +87,7 @@ namespace ZHello.CLR
         public void SubNormalFunc()
         {
         }
+
         public override void BaseVirtualFunc()
         {
             base.BaseVirtualFunc();
@@ -102,6 +98,7 @@ namespace ZHello.CLR
             base.BaseNormalFunc();
         }
     }
+
     public sealed class ClassB : BaseClass
     {
         public static void StaticFunc()
@@ -111,6 +108,7 @@ namespace ZHello.CLR
         public void SubNormalFunc()
         {
         }
+
         public override void BaseVirtualFunc()
         {
         }
@@ -119,14 +117,15 @@ namespace ZHello.CLR
         {
         }
     }
+
     public struct ValueType
     {
         public void NormalFunc()
         {
         }
+
         public static void StaticFunc()
         {
         }
     }
 }
-

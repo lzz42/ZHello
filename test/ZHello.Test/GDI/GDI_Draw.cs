@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ZHello.GDI;
@@ -55,10 +50,10 @@ namespace ZHello.Test.GDI
             };
             var num = new NumericUpDown()
             {
-                Minimum=1,
-                Maximum=500,
-                Value=1,
-                Size = new Size(60,30),
+                Minimum = 1,
+                Maximum = 500,
+                Value = 1,
+                Size = new Size(60, 30),
                 Location = new Point(10, 430),
             };
             num.ValueChanged += (s, e) =>
@@ -67,9 +62,11 @@ namespace ZHello.Test.GDI
             };
             btn.MouseClick += (s, e) =>
             {
-                ZHello.GDI.GDI_Draw.DDX = (int)num.Value;
+                ZHello.GDI.Draw.DDX = (int)num.Value;
                 var dc = f.CreateGraphics();
-                dc.Clear(Color.White);
+                //dc.SetClip(new Rectangle(100, 100, 1000, 1000));
+                //dc.Clear(Color.White);
+                //dc.ResetClip();
                 //f.DrawTestGrahpics();
                 //dc.DrawStar(new Rectangle(200, 100, 200, 200), Color.Red);
                 int radius = 80;
@@ -77,7 +74,7 @@ namespace ZHello.Test.GDI
                 dc.DrawPolygonX(new PointF(400, 200), radius, 4, Color.Blue);
                 dc.DrawPolygonX(new PointF(600, 200), radius, 5, Color.Green);
                 dc.DrawPolygonX(new PointF(800, 200), radius, 6, Color.Yellow);
-                
+
                 dc.DrawPolygonX(new PointF(200, 400), radius, 7, Color.Red);
                 dc.DrawPolygonX(new PointF(400, 400), radius, 8, Color.Blue);
                 dc.DrawPolygonX(new PointF(600, 400), radius, 9, Color.Green);
@@ -87,16 +84,18 @@ namespace ZHello.Test.GDI
                 dc.DrawPolygonX(new PointF(400, 600), radius, 12, Color.Blue);
                 dc.DrawPolygonX(new PointF(600, 600), radius, 13, Color.Green);
                 dc.DrawPolygonX(new PointF(800, 600), radius, 14, Color.Yellow);
-
             };
             var axis = new AxisRenderer()
             {
                 AxisType = AxisType.AxisXY,
+                SubScaleCount = 2,
             };
             f.Paint += (s, e) =>
             {
-                //axis.Bounds = new Rectangle(10, 10, f.Width-40, f.Height-70);
-                //axis.Render(e.Graphics);
+                var dc = e.Graphics;
+                dc.TranslateTransform(f.AutoScrollPosition.X, f.AutoScrollPosition.Y);
+                axis.Bounds = new Rectangle(1, 1, 800, 600);
+                axis.Render(dc);
                 //e.Graphics.DrawStar(new Rectangle(100, 100, 100, 100), Color.Red);
             };
             f.Controls.Add(btn);

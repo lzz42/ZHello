@@ -10,9 +10,9 @@ namespace ZHello.Algorithm.Sort
     {
         /// <summary>
         /// 快速排序期望时间O(nlgn)，最坏情况O(n^2)
-        /// 1.分解
-        /// 2.解决
-        /// 3.合并
+        /// 1.分解 将队列以某个值基准分解为两个队列
+        /// 2.解决 对每个队列进行递归调用分解
+        /// 3.合并 原址排序无需合并
         /// </summary>
         /// <param name="a"></param>
         public void Sort(int[] a)

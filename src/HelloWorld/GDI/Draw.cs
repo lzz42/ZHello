@@ -6,7 +6,27 @@ using System.Drawing.Imaging;
 
 namespace ZHello.GDI
 {
-    public static class GDI_Draw
+    /*GDI+绘图技巧
+     * 
+     * 1.选择Graphics.Clip获取指定的重绘区域，变更代码逻辑进行部分重绘提高效率
+     * 2.保存Pen/Brush/字体等可以节省内存、提高绘图效率，完成绘图后进行释放
+     * 3.对于滚动窗口内容绘制，可采用Graphics.TranslateTransform(x,y)移动坐标原点，简化绘图逻辑
+     * 4.对于图像操作，可以采用Graphics.DrawImageUnscaled()内部使用BitBlt,采用位图块传输，可提高效率
+     * 5.不是所有的字体都可以使用所有的风格(加粗、下划线等)，可以使用FontFamily.IsStyleAvailable()进行验证
+     * 6.调试技巧：平铺开发窗口、窗体的TopMost属性、在OnPaint()中添加虚拟代码测试某些条件进入断点
+     * 7.可滚动窗口:指定Form.AutoScrollMiniSize属性
+     * 8.Form.Invalidate()方法使某个窗体的工作区域无效，可以传递矩形参数指定指定的区域无效，通常建议调用Invalidate()方法重绘原因
+     *  8.1 GDI+绘图的通常执行密集型任务，在其他工作时调用绘图会妨碍其他工作
+     *  8.2 多线程情况下，通过Invalidate()将消息传递到消息队列,确保由一个线程完成所有的绘图工作(Application.Run()线程完成)
+     *  8.3 同一个时刻多个不同屏幕请求绘制时，通过Invalidate()方法Windows会在需要时合并Paint事件，合并无效区域，绘图操作从而被简化为一次
+     *  8.4 容易维护绘图代码，确保其他位置不会进入绘图代码（同时Invalidate()对于需要小部分的区域重绘可能导致系统开销过大，即导致全部重绘）
+     * 
+     */
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public static class Draw
     {
         /// <summary>
         /// 绘制图片 颜色矩阵
@@ -623,13 +643,52 @@ namespace ZHello.GDI
                 //g.DrawPath(Pens.Red, path);
                 //g.FillPath(brush, path);
             }
-            using (var pen = new Pen(color,1))
+            using (var pen = new Pen(color, 1))
             {
                 g.DrawPath(pen, path);
             }
             path.Dispose();
+            var rect = new RectangleF(centerP, new SizeF(2 * radius, 2 * radius));
+            rect.X -= radius;
+            rect.Y -= radius;
+            g.DrawRectangle(Pens.Gray, rect.X, rect.Y, rect.Width, rect.Height);
+            //g.SetClip(rect);
+            //g.RotateTransform((float)Math.PI / 180 * angle);
+            //g.ResetClip();
         }
 
         #endregion 绘制标记与正多边形
+
+        public static void Rotate(this Graphics g, Rectangle rect, int angle)
+        {
+            Rotate(g, rect, (float)(Math.PI * angle / 180));
+        }
+
+        public static void Rotate(this Graphics g, Rectangle rect, float angle)
+        {
+            var rect2 = new RectangleF(rect.X, rect.Y, rect.Width, rect.Height);
+            Rotate(g, rect2, angle);
+        }
+
+        public static void Rotate(this Graphics g, RectangleF rect, int angle)
+        {
+            Rotate(g, rect, (float)(Math.PI * angle / 180));
+        }
+
+        public static void Rotate(this Graphics g, RectangleF rect, float angle)
+        {
+            var tempRect = rect;
+            if (rect.Width > rect.Height)
+            {
+                tempRect = new RectangleF(rect.X + (rect.Width - rect.Height) / 2f, rect.Y, rect.Height, rect.Height);
+            }
+            else if (rect.Width < rect.Height)
+            {
+                tempRect = new RectangleF(rect.X, rect.Y + (rect.Height - rect.Width) / 2f, rect.Width, rect.Width);
+            }
+            g.SetClip(tempRect);
+            //TODO:
+            g.ResetClip();
+        }
     }
 }

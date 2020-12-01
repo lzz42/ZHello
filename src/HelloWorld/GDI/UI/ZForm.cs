@@ -16,6 +16,7 @@ namespace ZHello.GDI.UI
         public ZForm()
         {
             DRect = new Rectangle(50, 10, 80, 80);
+            this.AutoScrollMinSize = new Size(800, 600);
         }
 
         public void DrawTestGrahpics()
@@ -43,6 +44,8 @@ namespace ZHello.GDI.UI
             base.OnPaint(e);
             //自己的绘图代码
             var dc = e.Graphics;
+            //根据滚动条改变坐标系统的平移
+            dc.TranslateTransform(this.AutoScrollPosition.X,this.AutoScrollPosition.Y);
             //使用剪裁区域，提高绘图效率，原因：每次OnPaint会导致窗口内的所有内容被重绘，并没有考虑到多少需要重绘
             //获取剪裁区域
             var rect = e.ClipRectangle;
@@ -50,6 +53,8 @@ namespace ZHello.GDI.UI
             {
                 dc.DrawRectangle(Pens.Red, DRect);
                 dc.DrawEllipse(Pens.Red, DRect);
+                dc.DrawString("Test String", new Font("微软雅黑", 12f), Brushes.Green,DRect);
+                dc.Rotate(DRect, 30);
             }
 
             //默认值都是以客户端区域的左上角为原点
@@ -70,12 +75,23 @@ namespace ZHello.GDI.UI
             path.AddArc(10,10, 150, 120, 30, 120);
             //追加线段
             path.AddLine(10, 10, 80, 80);
-            path.CloseFigure();
             //添加贝塞尔曲线
-            Pen pen = new Pen(Color.Green, 3);
-            SolidBrush brush = new SolidBrush(Color.Red);
-            dc.FillPath(brush, path);
-            dc.DrawPath(pen, path);
+            path.AddBezier(80, 80, 90, 90, 100, 100, 200, 200);
+            path.CloseFigure();
+            //世界坐标World Coordinate 测量点距离全部绘图区域左上角的位置 对应于逻辑坐标
+            //页面坐标Page Coordinate 测量点距离客户区域左上角的位置 对应于设备坐标
+            //Windows API LPtoDP() DPtoLP()
+            //设备坐标Device Coordinate 类似于页面坐标但是测量单位使用Graphics.PageUnit指定的单位
+            //阴影画笔
+            //var croBrush = new HatchBrush(HatchStyle.Percent50, Color.Red, Color.Green);
+            //var lineBrush = new LinearGradientBrush(new PointF(1.5f, 1.5f), new PointF(3.5f, 3.5f), Color.Yellow, Color.Blue);
+            //var pBrush = new PathGradientBrush(path);
+            //dc.FillRectangle(pBrush, new Rectangle(0, 0, 100, 100));
+
+            //Pen pen = new Pen(Color.Green, 3);
+            //pen.Brush = lineBrush;
+            //dc.FillPath(croBrush, path);
+            //dc.DrawPath(pen, path);
 
         }
     }

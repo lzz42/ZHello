@@ -181,6 +181,7 @@
     <Compile Include="Algorithm\Sort\QuickSort.cs" />
     <Compile Include="Algorithm\Sort\SelectSort.cs" />
     <Compile Include="Algorithm\Sort\Sort.cs" />
+    <Compile Include="Algorithm\Sort\HeapSort.cs" />
     <Compile Include="Async\SyncException.cs" />
     <Compile Include="Base\CSharp7.0.cs" />
     <Compile Include="Base\CallInfo.cs" />
@@ -202,7 +203,7 @@
     <Compile Include="DesignPattern\CreatePattern.cs" />
     <Compile Include="DesignPattern\SpecialPattern.cs" />
     <Compile Include="DesignPattern\StructPattern.cs" />
-    <Compile Include="GDI\GDI_Draw.cs" />
+    <Compile Include="GDI\Draw.cs" />
     <Compile Include="GDI\ImageConvert.cs" />
     <Compile Include="Common\LicenseHelper.cs" />
     <Compile Include="Common\InjectionHelper.cs" />

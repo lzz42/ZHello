@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ZHello.Algorithm.Sort
+﻿namespace ZHello.Algorithm.Sort
 {
-    public class BubbleSort:Sort,ISort
+    public class BubbleSort : Sort, ISort
     {
         /// <summary>
         /// 冒泡排序算法时间复杂度n^2
+        /// 依次比较相邻项重复n^n即可完成
         /// </summary>
         /// <param name="a"></param>
         public void Sort(int[] a)
@@ -37,6 +32,5 @@ namespace ZHello.Algorithm.Sort
                 }
             }
         }
-
     }
 }
