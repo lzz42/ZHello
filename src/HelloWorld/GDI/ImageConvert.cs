@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 
@@ -430,5 +431,43 @@ namespace ZHello.GDI
             }
             return g;
         }
+    }
+
+    class MyClass
+    {
+
+
+        private static List<Icon> SystemIconList = new List<Icon>();
+
+        private static Icon GetSystemIcon(int index = 0)
+        {
+            index = index < 0 ? 0 : index;
+            if (SystemIconList.Count > 0)
+            {
+                index = index >= SystemIconList.Count ? index % SystemIconList.Count : index;
+                return SystemIconList[index];
+            }
+            var largeIcon = new IntPtr[1000];
+            var smallIcon = new IntPtr[1000];
+            ExtractIconEx("shell32.dll", 0, largeIcon, smallIcon, 1000);
+            for (int i = 0; i < largeIcon.Length; i++)
+            {
+                try
+                {
+                    if (largeIcon[i] != IntPtr.Zero)
+                        SystemIconList.Add(Icon.FromHandle(largeIcon[i]));
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+            }
+            index = index >= SystemIconList.Count ? index % SystemIconList.Count : index;
+            return SystemIconList[index];
+        }
+
+        [System.Runtime.InteropServices.DllImport("Shell32.dll")]
+        public extern static int ExtractIconEx(string libName, int iconIndex, IntPtr[] largeIcon, IntPtr[] smallIcon, int nIcons);
+
     }
 }

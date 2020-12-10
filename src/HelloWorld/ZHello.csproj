@@ -189,6 +189,7 @@
     <Compile Include="Base\TypeConverter_Test.cs" />
     <Compile Include="Cecil\MonoCecilPractices.cs" />
     <Compile Include="CLR\AppDomainHelper.cs" />
+    <Compile Include="CLR\UnmanagedAPIReference.cs" />
     <Compile Include="Common\DbgHelper.cs" />
     <Compile Include="Algorithm\Lib\HashLib.cs" />
     <Compile Include="Algorithm\Lib\MD5Lib.cs" />
@@ -234,6 +235,7 @@
     <Compile Include="MEF\CalImpl.cs" />
     <Compile Include="MEF\ICal.cs" />
     <Compile Include="MEF\MEFClient.cs" />
+    <Compile Include="OS\AppUpdate.cs" />
     <Compile Include="OS\UseFont.cs" />
     <Compile Include="Other\PipelineStyleProgram.cs" />
     <Compile Include="HelloWorld.cs" />

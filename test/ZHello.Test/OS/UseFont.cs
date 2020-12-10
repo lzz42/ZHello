@@ -35,7 +35,6 @@ namespace ZHello.Test.OS
             Assert.IsTrue(ZHello.OS.UseFont.ExistFont(name));
             Assert.IsTrue(ZHello.OS.UseFont.UninstallFont(name, file));
             Assert.IsFalse(ZHello.OS.UseFont.ExistFont(name));
-            //Assert.IsTrue(UseFont.InstallFont(file, name));
         }
     }
 }

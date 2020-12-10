@@ -63,7 +63,7 @@ namespace ZHello.Algorithm.Lib
             Initialize();
         }
 
-        public static UInt32 Compute(byte[] buffer)
+        public static uint Compute(byte[] buffer)
         {
             return ~CalculateHash(InitializeTable(DefaultPolynomial), DefaultSeed, buffer, 0, buffer.Length);
         }

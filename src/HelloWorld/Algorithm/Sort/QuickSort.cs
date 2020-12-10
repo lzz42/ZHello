@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ZHello.Algorithm.Sort
+﻿namespace ZHello.Algorithm.Sort
 {
-    public class QuickSort: Sort,ISort
+    public class QuickSort : Sort, ISort
     {
         /// <summary>
         /// 快速排序期望时间O(nlgn)，最坏情况O(n^2)
