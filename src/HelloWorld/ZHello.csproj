@@ -169,10 +169,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Algorithm\ALCache\DataCache.cs" />
     <Compile Include="Algorithm\Alg_Dekker.cs" />
     <Compile Include="Algorithm\Alg_Strassen.cs" />
     <Compile Include="Algorithm\Lib\CrcLib.cs" />
-    <Compile Include="Algorithm\LRU.cs" />
     <Compile Include="Algorithm\LZW.cs" />
     <Compile Include="Algorithm\Alg_Peterson.cs" />
     <Compile Include="Algorithm\Sort\BubbleSort.cs" />
@@ -261,7 +261,7 @@
     <Compile Include="Redis\RedisHelper.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Algorithm\LRU.md" />
+    <None Include="Algorithm\ALCache\LRU.md" />
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>

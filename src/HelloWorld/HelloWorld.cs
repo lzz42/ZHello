@@ -1,18 +1,17 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Net;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ZHello
 {
     public class HelloWorldEntry
     {
-        const string Hello = "Hello 2.0.0.0";
+        private const string Hello = "Hello 2.0.0.0";
+
         private static void Main(string[] args)
         {
             Console.WriteLine("hello world...");
@@ -24,23 +23,24 @@ namespace ZHello
                     case "a":
                         Console.WriteLine(Hello);
                         break;
+
                     case "e":
                         return;
+
                     case "update":
                         OS.AppUpdate.UpdateThis();
                         break;
+
                     case "restart":
                         Application.Restart();
                         Environment.Exit(0);
                         break;
+
                     default:
                         Console.WriteLine("NONE........");
                         break;
                 }
             }
-            /*            TaskManagerControl();
-                        Console.ReadLine();
-                        Console.ReadKey();*/
         }
 
         private static void InitMutex()
