@@ -4,7 +4,9 @@
     {
         /// <summary>
         /// 简单选择排序
+        /// 时间复杂度O(n^2)
         /// 从第二项开始遍历：选择当前项后的所有项中的最大值或者最小值与当前项进行互换
+        /// 
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="a"></param>

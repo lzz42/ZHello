@@ -175,7 +175,9 @@
     <Compile Include="Algorithm\Lib\CrcLib.cs" />
     <Compile Include="Algorithm\LZW.cs" />
     <Compile Include="Algorithm\Alg_Peterson.cs" />
+    <Compile Include="Algorithm\Median\FindMedian.cs" />
     <Compile Include="Algorithm\Sort\BubbleSort.cs" />
+    <Compile Include="Algorithm\Sort\CountingSort.cs" />
     <Compile Include="Algorithm\Sort\InsertSort.cs" />
     <Compile Include="Algorithm\Sort\MergeSort.cs" />
     <Compile Include="Algorithm\Sort\QuickSort.cs" />

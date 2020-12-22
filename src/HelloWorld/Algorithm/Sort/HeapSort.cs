@@ -176,6 +176,13 @@ namespace ZHello.Algorithm.Sort
             a = h.Data;
         }
 
+        /// <summary>
+        /// 堆排序
+        /// 基于构建和维护二叉树的排序
+        /// 时间复杂度O(nlgn)
+        /// 算法导论 6.4 堆排序算法
+        /// </summary>
+        /// <param name="a"></param>
         public void Sort(int[] a)
         {
             Heap h;

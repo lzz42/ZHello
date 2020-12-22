@@ -74,21 +74,22 @@ namespace ZHello.Test.Algorithm.Sort
             a1 = new int[11];
             b0 = new int[12];
             b1 = new int[12];
-            for (int i = 0; i < 11; i++)
-            {
-                a0[i] = i + 1;
-                a1[i] = i + 1;
-                b0[i] = i + 1;
-                b1[i] = i + 1;
-            }
-            b0[11] = 1024;
-            b1[11] = 1024;
-
             var r = new Random(7);
+            for (int i = 1; i < 11; i++)
+            {
+                var d = r.Next(0, 5);
+                a0[i] = a0[i - 1] + d;
+                a1[i] = a1[i - 1] + d;
+                b0[i] = b0[i - 1] + d;
+                b1[i] = b1[i - 1] + d;
+            }
+            b0[11] = 256;
+            b1[11] = 256;
+
             for (int i = 0; i < 11; i++)
             {
-                var rr = r.Next(1024, 2048);
-                var cc = rr % 11;
+                var rr = r.Next(17, 255);
+                var cc = rr % 12;
                 ZHello.Algorithm.Sort.Sort.Swap(ref a1[i], ref a1[cc]);
             }
             for (int i = 0; i < 12; i++)
@@ -117,6 +118,13 @@ namespace ZHello.Test.Algorithm.Sort
         public void BubbleSort()
         {
             var sort = new ZHello.Algorithm.Sort.BubbleSort();
+            ISortTest(sort);
+        }
+
+        [TestMethod]
+        public void CountingSort()
+        {
+            var sort = new ZHello.Algorithm.Sort.CountingSort();
             ISortTest(sort);
         }
 

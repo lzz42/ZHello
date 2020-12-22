@@ -3,7 +3,8 @@
     public class BubbleSort : Sort, ISort
     {
         /// <summary>
-        /// 冒泡排序算法时间复杂度n^2
+        /// 冒泡排序算法
+        /// 时间复杂度O(n^2)
         /// 依次比较相邻项重复n^n即可完成
         /// </summary>
         /// <param name="a"></param>

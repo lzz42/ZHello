@@ -9,10 +9,12 @@ namespace ZHello.Algorithm.Sort
     public class MergeSort : Sort, ISort
     {
         /// <summary>
-        /// 
+        /// 归并排序
+        /// 时间复杂度O(nlgn)
         /// 1.分解 将队列分解为可以解决的两个基元队列
         /// 2.解决 解决基元队列
         /// 3.合并 合并所有的已解决的基元队列
+        /// 算法导论 2.3.1 分治法
         /// </summary>
         /// <param name="a"></param>
         public void Sort(int[] a)
