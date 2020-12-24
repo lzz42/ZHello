@@ -184,6 +184,8 @@
     <Compile Include="Algorithm\Sort\SelectSort.cs" />
     <Compile Include="Algorithm\Sort\Sort.cs" />
     <Compile Include="Algorithm\Sort\HeapSort.cs" />
+    <Compile Include="Algorithm\Struct\StackQueueLinkedList.cs" />
+    <Compile Include="Algorithm\Struct\Tree.cs" />
     <Compile Include="Async\SyncException.cs" />
     <Compile Include="Base\CSharp7.0.cs" />
     <Compile Include="Base\CallInfo.cs" />
