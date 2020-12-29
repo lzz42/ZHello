@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ZHello.Algorithm.Sort
+﻿namespace ZHello.Algorithm.Sort
 {
     public class InsertSort : Sort, ISort
     {

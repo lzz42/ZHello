@@ -130,7 +130,7 @@ namespace ZHello.Algorithm.Struct
             head.prev=nil
             tail=nil.prev
             tail.next=nil
-             */ 
+             */
         }
 
         #region 双向链表

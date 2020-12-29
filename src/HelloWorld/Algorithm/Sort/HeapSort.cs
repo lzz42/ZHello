@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ZHello.Algorithm.Sort
 {
@@ -17,6 +13,7 @@ namespace ZHello.Algorithm.Sort
             }
 
             public int[] Data { get; set; }
+
             public int this[int i]
             {
                 get { return Data[i]; }
@@ -72,7 +69,7 @@ namespace ZHello.Algorithm.Sort
             }
         }
 
-        private void Min_Heapify(Heap a,int i)
+        private void Min_Heapify(Heap a, int i)
         {
             int l = a.Left(i);
             int largest = 0;

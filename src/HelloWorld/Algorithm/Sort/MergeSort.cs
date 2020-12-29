@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ZHello.Algorithm.Sort
 {
@@ -42,7 +38,7 @@ namespace ZHello.Algorithm.Sort
             int i = 0, j = 0;
             for (i = 0; i < n1; i++)
             {
-                L[i] = a[p+i];
+                L[i] = a[p + i];
             }
             for (j = 0; j < n2; j++)
             {
