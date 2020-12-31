@@ -10,10 +10,11 @@
 #ifdef __cplusplus
 #define NULL    0
 #else
-#define NULL    ((void *)0)
+#define NULL ((void *)0)
 #endif
 #endif
 
+void PointerTestEx();
 
 typedef struct IntroStruct
 {
@@ -41,7 +42,7 @@ void PointerTest()
 	int* konwnTypePtr;
 	int *p1, *p12;
 	//声明未知类型指针
-	void* unknownPtr;
+	void* uPtr;
 
 	//指针操作
 	// &取地址符 *取值
@@ -71,11 +72,11 @@ void PointerTest()
 
 	//函数指针
 	//指向函数 void PointerTest()
-	void(*ptrPonterTest)();
-	ptrPonterTest = PointerTest;
+	void(*pPonterTest)();
+	pPonterTest = PointerTestEx;
 	//指向函数 int main(int argc, char* argv[])
-	void(*ptrMain)(int* , int* , bool(*CompareFunc)(int, int));
-	ptrMain = Sort;
+	void (*pMain)(int* , int* , bool(*CompareFunc)(int, int));
+	pMain = Sort;
 
 	//结构体指针
 	IntroStruct structA;
@@ -120,3 +121,6 @@ void PointerTest()
 	printf("array+0:%d\n", sizeof(array + 0));
 }
 
+void PointerTestEx() {
+
+}

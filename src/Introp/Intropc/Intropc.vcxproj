@@ -152,6 +152,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ALStruct\LinkedList.cpp" />
     <ClCompile Include="Intropc\Func_Class.cpp" />
     <ClCompile Include="MemoryAlignment.cpp" />
     <ClCompile Include="ParamTest.cpp" />
