@@ -110,9 +110,7 @@ namespace ZHello.Algorithm.Median
             a[q] ^= a[r];
             a[r] ^= a[q];
             a[q] ^= a[r];
-
             int k = a[r];
-
             return q;
         }
     }

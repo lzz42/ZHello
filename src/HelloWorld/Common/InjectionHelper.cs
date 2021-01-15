@@ -38,7 +38,7 @@ namespace ZHello.Common
          * 5.加载DLL，执行代码
              */
 
-        public static bool Inject(int pid,MethodBase method)
+        public static bool Inject(int pid, MethodBase method)
         {
             var proc = Process.GetProcessById(pid);
             return false;
@@ -76,8 +76,6 @@ namespace ZHello.Common
         [DllImport("Kernel32.dll")]
         public static extern int CreateRemoteThreadEx(int hProcess, SECURITY_ATTRIBUTES lpThreadAttributes
             , uint dwStackSize, int lpStartAddress, IntPtr lpParameter, int dwCreationFlags, long lpThreadId);
-
-
 
         /*
          typedef struct _SECURITY_ATTRIBUTES {

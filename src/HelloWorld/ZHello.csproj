@@ -339,7 +339,6 @@
     <Compile Include="Cecil\CS_Script.cs" />
     <Compile Include="Cecil\MonoCecilPractices.cs" />
     <Compile Include="CLR\AppDomainHelper.cs" />
-    <Compile Include="CLR\UnmanagedAPIReference.cs" />
     <Compile Include="Common\DbgHelper.cs" />
     <Compile Include="Algorithm\Lib\HashLib.cs" />
     <Compile Include="Algorithm\Lib\MD5Lib.cs" />

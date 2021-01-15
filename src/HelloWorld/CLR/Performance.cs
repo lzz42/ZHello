@@ -1,8 +1,6 @@
 ﻿/*
  C#性能优化
-
     装箱与拆箱 boxing and unbnoxing
-
     函数调用：
         C#中函数分为3类：
         1.非虚实例方法-普通方法
@@ -26,13 +24,9 @@
         2.尽量使用非虚方法，某些编译器会使用call调用非虚方法（C#编译器会使用callvirt调用所有的实例方法）；
         3.调用值类型中的方法，一般使用call；
         4.尽量使用sealed密封类，JIT使用非虚方式（call）调用该类中的虚方法（C#编译器生成callvirt指令，JIT会优化这个调用）；
-
     类型构造器
-
     Try...Catch..
-
     Demand和LinkDemand
-
      */
 
 namespace ZHello.CLR

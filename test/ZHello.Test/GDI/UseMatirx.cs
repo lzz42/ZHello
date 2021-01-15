@@ -57,14 +57,17 @@ namespace ZHello.Test.GDI
             };
             btn.MouseClick += (s, e) =>
             {
-                var img = ZHello.GDI.UseMatrix.RotateAt(Img, (int)num.Value, new PointF(0f, 0f));
+                var h = Math.Min(Img.Width, Img.Height);
+                h = h / 2;
+                var pp = new Point(h, h);
+                var img = ZHello.GDI.UseMatrix.RotateAt(Img, (int)num.Value, pp);
                 p.BackgroundImage = img;
             };
 
             btn2.MouseClick += (s, e) =>
             {
                 var v = (int)num.Value;
-                for (int i = 0; i < 36; i++)
+                for (int i = 0; i < 5; i++)
                 {
                     Thread.Sleep(300);
                     var img = ZHello.GDI.UseMatrix.RotateAt(Img, v, new PointF(0f, 0f));
