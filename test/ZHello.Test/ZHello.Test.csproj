@@ -69,6 +69,7 @@
     <Compile Include="GDI\UseMatirx.cs" />
     <Compile Include="Hook\Hooker.cs" />
     <Compile Include="MQ\ZeroMq.cs" />
+    <Compile Include="Net\OpFtp_Test.cs" />
     <Compile Include="OS\UseFont.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

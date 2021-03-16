@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -16,12 +12,12 @@ namespace ZHello.Test.GDI
     public class UseMatirx
     {
         public static Image Img { get; set; }
+
         [TestInitialize]
         public void Init()
         {
-            Img = Image.FromFile(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "GDI","ColorRing.png"));
+            Img = Image.FromFile(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "GDI", "ColorRing.png"));
         }
-
 
         [TestMethod]
         public void Main()
@@ -30,19 +26,19 @@ namespace ZHello.Test.GDI
             {
                 Text = "UseMatrix",
                 Size = new System.Drawing.Size(800, 600),
-                Padding=new Padding(10),
+                Padding = new Padding(10),
             };
             var p = new Panel()
             {
                 Dock = DockStyle.Left,
                 Width = 700,
                 BackgroundImage = Img,
-                BackgroundImageLayout= ImageLayout.Center,
-                BackColor= Color.LightGreen,
+                BackgroundImageLayout = ImageLayout.Center,
+                BackColor = Color.LightGreen,
             };
             var num = new NumericUpDown()
             {
-                Value=10,
+                Value = 10,
                 Dock = DockStyle.Top,
             };
             var btn = new Button()

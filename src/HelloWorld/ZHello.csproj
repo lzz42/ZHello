@@ -380,6 +380,7 @@
     <Compile Include="MQ\ZeroMQ\ZeroSubClient.cs" />
     <Compile Include="MQ\ZeroMQ\ZeroVentilatorWorkerSinker.cs" />
     <Compile Include="MQ\ZeroMQ\ZeroXSubAndXPub.cs" />
+    <Compile Include="Net\OpFtp.cs" />
     <Compile Include="Net\ThriftHelper.cs" />
     <Compile Include="MEF\CalImpl.cs" />
     <Compile Include="MEF\ICal.cs" />
